@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contabilità Dettaglio Guasto - Areti MT/BT</title>
+    <title>Dettaglio Contabile Guasto - Areti MT/BT</title>
     <style>
         :root {
             --primary: #800055;
@@ -89,7 +89,7 @@
             font-weight: bold;
         }
 
-        /* Controls Panel */
+        /* Panel Controls */
         .panel-controls {
             background-color: #eef4fc;
             border: 1px solid #b8d5f3;
@@ -144,7 +144,7 @@
         table.excel-table {
             border-collapse: collapse;
             width: 100%;
-            min-width: 1400px;
+            min-width: 1500px;
             background: #fff;
         }
 
@@ -158,9 +158,9 @@
 
         .row-macro { background-color: var(--excel-yellow); font-weight: bold; height: 26px; }
         .row-sub { background-color: #ff0000; color: #ffffff; font-weight: bold; height: 20px; }
-        .row-desc { height: 90px; text-align: left !important; vertical-align: top !important; font-size: 9px; line-height: 1.2; padding: 6px !important; }
-        .row-code { background-color: var(--excel-yellow); font-weight: bold; height: 100px; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10px; }
-        .row-qta-input { height: 30px; }
+        .row-desc { height: 95px; text-align: left !important; vertical-align: top !important; font-size: 9px; line-height: 1.2; padding: 6px !important; }
+        .row-code { background-color: var(--excel-yellow); font-weight: bold; height: 110px; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10px; }
+        .row-qta-input { height: 32px; }
         .row-qta-input input { width: 90%; text-align: center; font-weight: bold; font-size: 12px; border: 1px solid #0056b3; background-color: #ffffcc; }
         
         .bg-totals { background-color: #f2f2f2; font-weight: bold; }
@@ -190,7 +190,7 @@
             body { background: white; padding: 0; }
             .app-container { box-shadow: none; border: none; padding: 0; width: 100%; }
             .table-responsive { overflow-x: visible; }
-            @page { size: A4 landscape; margin: 10mm; }
+            @page { size: A4 landscape; margin: 8mm; }
         }
     </style>
 </head>
@@ -222,83 +222,73 @@
         </div>
         <div class="info-group">
             <label>Ribasso d'Asta (%)</label>
-            <input type="number" id="ribasso" value="6.65" step="0.01" onchange="ricalcolaMatrix()">
+            <input type="number" id="ribasso" value="6.65" step="0.01" onchange="renderMatrix()">
         </div>
     </div>
 
-    <!-- Pannello di Controllo Colonne -->
+    <!-- Pannello di Controllo Aggiunta Colonne -->
     <div class="panel-controls no-print">
-        <h3>Aggiungi Prestazione al Dettaglio Misure (141 Voci Prezziario Areti)</h3>
+        <h3>Aggiungi Prestazione al Dettaglio Misure (Prezziario Areti Completo)</h3>
         <div class="control-row">
-            <select id="selectPrestazione" style="flex: 1; min-width: 300px;">
-                <option value="">-- Seleziona voce da aggiungere --</option>
+            <select id="selectPrestazione" style="flex: 1; min-width: 320px;">
+                <option value="">-- Seleziona voce da aggiungere all'abaco --</option>
             </select>
             <button class="btn" onclick="aggiungiColonnaSelezionata()">+ Aggiungi Colonna</button>
-            <button class="btn btn-success" style="margin-left: auto;" onclick="window.print()">Stampa / Salva PDF</button>
+            <button class="btn btn-success" style="margin-left: auto;" onclick="window.print()">Stampa / Salva PDF A4</button>
         </div>
     </div>
 
-    <!-- Tabella Excel Matrice -->
+    <!-- Tabella Matrice Excel -->
     <div class="table-responsive">
         <table class="excel-table" id="matrixTable">
             <thead>
-                <!-- Riga 0: Macro Categoria -->
+                <!-- Riga Macro Categoria -->
                 <tr class="row-macro" id="rowMacro">
                     <td style="width: 140px; background-color: #fff;">Indirizzo</td>
-                    <!-- Colonne Dinamiche -->
                 </tr>
-                <!-- Riga 1: Tensione / Tipo -->
+                <!-- Riga Tensione / Sotto-categoria -->
                 <tr class="row-sub" id="rowSub">
                     <td style="background-color: #fff; color: #000;">TENSIONE</td>
-                    <!-- Colonne Dinamiche -->
                 </tr>
-                <!-- Riga 2: Descrizione Lavoro -->
+                <!-- Riga Descrizione Lavoro -->
                 <tr class="row-desc" id="rowDesc">
                     <td style="font-weight: bold; background-color: #f9f9f9;">Descrizione Lavoro</td>
-                    <!-- Colonne Dinamiche -->
                 </tr>
-                <!-- Riga 3: Codice Tariffa (Giallo Verticale) -->
+                <!-- Riga Codice Tariffa (Giallo Verticale) -->
                 <tr class="row-code" id="rowCode">
                     <td style="writing-mode: horizontal-tb; transform: none; background-color: #fff;">Codice Tariffa</td>
-                    <!-- Colonne Dinamiche -->
                 </tr>
             </thead>
             <tbody>
                 <!-- Riga Input Quantità -->
                 <tr class="row-qta-input" id="rowInput">
                     <td style="font-weight: bold; text-align: right;">Quantità Misurata</td>
-                    <!-- Input Dinamici -->
                 </tr>
                 <!-- Riga Totale Q.tà -->
                 <tr class="bg-totals" id="rowQtaTot">
                     <td style="text-align: right;">Q.TA' TOTALE</td>
-                    <!-- Totali Qta Dinamici -->
                 </tr>
                 <!-- Riga Importo Unitario Base -->
                 <tr class="bg-totals" id="rowImpUnit">
                     <td style="text-align: right;">IMPORTO UNITARIO (€)</td>
-                    <!-- Importi Unitari Dinamici -->
                 </tr>
                 <!-- Riga Valore Unitario Scontato -->
                 <tr class="bg-valore-unitario" id="rowValUnit">
                     <td style="text-align: right;">VALORE UNITARIO (€)</td>
-                    <!-- Valori Unitari Scontati Dinamici -->
                 </tr>
-                <!-- Riga Totale Prestazioni -->
+                <!-- Riga Totale Prestazioni per Colonna -->
                 <tr class="bg-prestazioni" id="rowTotPrest">
                     <td style="text-align: right; font-weight: bold;">TOTALE PRESTAZIONI (€)</td>
-                    <!-- Totali Prestazione Dinamici -->
                 </tr>
-                <!-- Riga Azioni (Solo a schermo) -->
+                <!-- Riga Azione Elimina -->
                 <tr class="no-print" id="rowActions">
                     <td style="text-align: right;">Rimuovi</td>
-                    <!-- Pulsanti Elimina -->
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Box Totale Generale Spettante -->
+    <!-- Box Totale Complessivo Spettante -->
     <div class="big-total-container">
         <div class="big-total-box">
             <span>IMPORTO TOTALE:</span>
@@ -308,7 +298,7 @@
 </div>
 
 <script>
-    // PREZZIARIO UFFICIALE COMPLETO ARETI
+    // PREZZIARIO UFFICIALE ARETI COMPLETO
     const prezziarioCompleto = [
         { cod: '20E.A01.01.02', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø125/160mm su sterrato', pBase: 45.37 },
         { cod: '20E.A01.01.03', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø63-110mm (asfalto/selciato)', pBase: 51.91 },
@@ -318,11 +308,11 @@
         { cod: '20E.C01.01.06', macro: 'POSA CAVI', sub: 'MT', desc: 'Linea MT', pBase: 3.90 },
         { cod: '20E.C01.02.15', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Giunto MT terna', pBase: 433.98 },
         { cod: '20E.I01.05.07', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Maggiorazione betonabile', pBase: 301.00 },
-        { cod: '20C.B04.02.01', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei primi 3 metri di nuova canalizzazione', pBase: 266.80 },
+        { cod: '20C.B04.02.01', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei primi 3 metri di nuova canalizzazione.', pBase: 266.80 },
         { cod: '20C.B04.02.02', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei successivi metri oltre i primi 3 m. Al metro lineare.', pBase: 6.90 },
-        { cod: '20C.B04.02.04', macro: 'ARCHEOLOGIA', sub: '', desc: 'Compenso aggiuntivo alle prestazioni di sorveglianza archeologica per interventi feriali dopo le 16:00, sabato e festivi.', pBase: 125.35 },
+        { cod: '20C.B04.02.04', macro: 'ARCHEOLOGIA', sub: '', desc: 'Compenso aggiuntivo alle prestazioni di sorveglianza archeologica per interventi nei giorni feriali dopo le ore 16,00 e nei giorni di sabato e festivi.', pBase: 125.35 },
         { cod: '20C.D01.04.06', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Ripristino marciapiede in tappeto d\'usura', pBase: 12.62 },
-        { cod: '20C.D01.04.05', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Compenso aggiuntivo per la semplice rimozione dell\'asfalto colato laddove non è necessario intervenire sul sottofondo.', pBase: 5.38 },
+        { cod: '20C.D01.04.05', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Compenso aggiuntivo per la semplice rimozione dell\'asfalto colato laddovce non è necessario intervenire sul sottofondo, comprensivo del trasporto a discarica e dei relativi oneri di conferimento.', pBase: 5.38 },
         { cod: '20C.A01.01.05', macro: 'BRANDIZZAZIONE', sub: '', desc: 'Brandizzazione cantiere fino a 20m', pBase: 100.00 },
         { cod: '20C.A01.01.02', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio qualificato', pBase: 36.73 },
         { cod: '20C.A01.01.03', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio specializzato', pBase: 39.60 },
@@ -334,3 +324,116 @@
         { cod: 'SIC.E 08', macro: 'ONERI SICUREZZA', sub: 'SIC', desc: 'Oneri ripristino asfalto/colato/selciato oltre mq 20 fino a mq 40', pBase: 49.44 },
         { cod: 'SIC.E 67', macro: 'ONERI SICUREZZA', sub: 'SIC', desc: 'Sicurezza riferita a prestazione 20C.A01.01.05', pBase: 10.02 }
     ];
+
+    // Stato Colonne Correnti dell'intervento 26ZE61UC09820
+    let colonneAttive = [
+        { cod: '20E.A01.01.02', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø125/160mm su sterrato', pBase: 45.37, qta: 0 },
+        { cod: '20E.A01.04.02', macro: 'BUCA GIUNTI + SAGGI', sub: 'MT', desc: 'Buca giunti MT su asfalto fino a mq 8', pBase: 1707.46, qta: 1 },
+        { cod: '20E.A01.04.08', macro: 'BUCA GIUNTI + SAGGI', sub: 'MT', desc: 'Saggi d\'indagine/buche per posa cavi (eccedenza buca giunti)', pBase: 154.96, qta: 10 },
+        { cod: '20E.C01.01.06', macro: 'POSA CAVI', sub: 'MT', desc: 'Linea MT', pBase: 3.90, qta: 4 },
+        { cod: '20E.C01.02.15', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Giunto MT terna', pBase: 433.98, qta: 2 },
+        { cod: '20E.I01.05.07', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Maggiorazione betonabile', pBase: 301.00, qta: 1 },
+        { cod: '20C.B04.02.01', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei primi 3 metri di nuova canalizzazione.', pBase: 266.80, qta: 1 },
+        { cod: '20C.B04.02.02', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei successivi metri oltre i primi 3 m. Al metro lineare.', pBase: 6.90, qta: 27 },
+        { cod: '20C.B04.02.04', macro: 'ARCHEOLOGIA', sub: '', desc: 'Compenso aggiuntivo alle prestazioni di sorveglianza archeologica per interventi nei giorni feriali dopo le ore 16,00 e nei giorni di sabato e festivi.', pBase: 125.35, qta: 1 },
+        { cod: '20C.D01.04.06', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Ripristino marciapiede in tappeto d\'usura', pBase: 12.62, qta: 36 },
+        { cod: '20C.D01.04.05', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Compenso aggiuntivo per la semplice rimozione dell\'asfalto colato laddovce non è necessario intervenire sul sottofondo, comprensivo del trasporto a discarica e dei relativi oneri di conferimento.', pBase: 5.38, qta: 18 },
+        { cod: '20C.A01.01.05', macro: 'BRANDIZZAZIONE', sub: '', desc: 'Brandizzazione cantiere fino a 20m', pBase: 100.00, qta: 1 },
+        { cod: '20C.A01.01.02', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio qualificato', pBase: 36.73, qta: 6.4 }
+    ];
+
+    function popolaDropdown() {
+        const select = document.getElementById('selectPrestazione');
+        prezziarioCompleto.forEach((item, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = `[${item.cod}] ${item.desc} (${item.pBase.toFixed(2)} €)`;
+            select.appendChild(opt);
+        });
+    }
+
+    function aggiungiColonnaSelezionata() {
+        const idx = document.getElementById('selectPrestazione').value;
+        if (idx === "") return;
+        const item = prezziarioCompleto[idx];
+        
+        colonneAttive.push({
+            cod: item.cod,
+            macro: item.macro,
+            sub: item.sub,
+            desc: item.desc,
+            pBase: item.pBase,
+            qta: 1
+        });
+
+        renderMatrix();
+    }
+
+    function rimuoviColonna(index) {
+        colonneAttive.splice(index, 1);
+        renderMatrix();
+    }
+
+    function renderMatrix() {
+        const ribasso = parseFloat(document.getElementById('ribasso').value) || 0;
+        const molt = 1 - (ribasso / 100);
+
+        const rowMacro = document.getElementById('rowMacro');
+        const rowSub = document.getElementById('rowSub');
+        const rowDesc = document.getElementById('rowDesc');
+        const rowCode = document.getElementById('rowCode');
+        const rowInput = document.getElementById('rowInput');
+        const rowQtaTot = document.getElementById('rowQtaTot');
+        const rowImpUnit = document.getElementById('rowImpUnit');
+        const rowValUnit = document.getElementById('rowValUnit');
+        const rowTotPrest = document.getElementById('rowTotPrest');
+        const rowActions = document.getElementById('rowActions');
+
+        rowMacro.innerHTML = '<td style="width: 140px; background-color: #fff;">Indirizzo</td>';
+        rowSub.innerHTML = '<td style="background-color: #fff; color: #000;">TENSIONE</td>';
+        rowDesc.innerHTML = '<td style="font-weight: bold; background-color: #f9f9f9;">Descrizione Lavoro</td>';
+        rowCode.innerHTML = '<td style="writing-mode: horizontal-tb; transform: none; background-color: #fff;">Codice Tariffa</td>';
+        rowInput.innerHTML = '<td style="font-weight: bold; text-align: right;">Quantità Misurata</td>';
+        rowQtaTot.innerHTML = '<td style="text-align: right;">Q.TA\' TOTALE</td>';
+        rowImpUnit.innerHTML = '<td style="text-align: right;">IMPORTO UNITARIO (€)</td>';
+        rowValUnit.innerHTML = '<td style="text-align: right;">VALORE UNITARIO (€)</td>';
+        rowTotPrest.innerHTML = '<td style="text-align: right; font-weight: bold;">TOTALE PRESTAZIONI (€)</td>';
+        rowActions.innerHTML = '<td style="text-align: right;">Rimuovi</td>';
+
+        let sommaTotaleComplessivo = 0;
+
+        colonneAttive.forEach((col, idx) => {
+            const isEsenteRibasso = col.cod.startsWith('SIC.') || col.cod === '20C.A01.01.05';
+            const vUnit = isEsenteRibasso ? col.pBase : col.pBase * molt;
+            const totPrest = col.qta * vUnit;
+            sommaTotaleComplessivo += totPrest;
+
+            rowMacro.innerHTML += `<td>${col.macro}</td>`;
+            rowSub.innerHTML += `<td>${col.sub || '-'}</td>`;
+            rowDesc.innerHTML += `<td>${col.desc}</td>`;
+            rowCode.innerHTML += `<td>${col.cod}</td>`;
+            
+            rowInput.innerHTML += `<td><input type="number" step="0.01" value="${col.qta}" onchange="aggiornaQta(${idx}, this.value)"></td>`;
+            rowQtaTot.innerHTML += `<td>${col.qta.toFixed(2).replace('.', ',')}</td>`;
+            rowImpUnit.innerHTML += `<td>€ ${col.pBase.toFixed(2).replace('.', ',')}</td>`;
+            rowValUnit.innerHTML += `<td>€ ${vUnit.toFixed(2).replace('.', ',')}</td>`;
+            rowTotPrest.innerHTML += `<td>€ ${totPrest.toFixed(2).replace('.', ',')}</td>`;
+            rowActions.innerHTML += `<td><button class="btn btn-danger" onclick="rimuoviColonna(${idx})">X</button></td>`;
+        });
+
+        document.getElementById('importoTotaleComplessivo').innerText = `€ ${sommaTotaleComplessivo.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function aggiornaQta(index, val) {
+        colonneAttive[index].qta = parseFloat(val) || 0;
+        renderMatrix();
+    }
+
+    window.onload = function() {
+        popolaDropdown();
+        renderMatrix();
+    };
+</script>
+
+</body>
+</html>
