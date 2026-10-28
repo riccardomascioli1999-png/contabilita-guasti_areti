@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scheda dati giunti e terminali MT - Areti</title>
+    <title>Scheda Dati Giunti e Terminali MT - Areti</title>
     <!-- Libreria per la generazione dinamica del PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -14,47 +14,84 @@
 
         body {
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
+            padding: 0;
+            background-color: #e9ecef;
             color: #000;
-        }
-
-        .actions-bar {
-            max-width: 210mm;
-            margin: 0 auto 15px auto;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            padding: 12px 20px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .actions-bar h2 {
-            margin: 0;
+        /* Menu Laterale */
+        .sidebar {
+            width: 340px;
+            background-color: #ffffff;
+            border-right: 1px solid #ced4da;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
             font-size: 16px;
-            color: #333;
+            margin: 0 0 10px 0;
+            color: #e6007e;
+            border-bottom: 2px solid #e6007e;
+            padding-bottom: 5px;
         }
 
-        .btn-group {
+        .form-group {
             display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .form-group select, .form-group input {
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 12px;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            border-color: #e6007e;
+            box-shadow: 0 0 0 2px rgba(230,0,126,0.25);
+        }
+
+        .btn-container {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
             gap: 10px;
+            padding-top: 15px;
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 10px;
             font-size: 13px;
             font-weight: bold;
             color: #fff;
-            background-color: #0056b3;
+            background-color: #e6007e;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            text-align: center;
         }
 
         .btn:hover {
-            background-color: #003d80;
+            background-color: #c4006b;
         }
 
         .btn-secondary {
@@ -65,25 +102,31 @@
             background-color: #5a6268;
         }
 
-        /* Contenitore foglio A4 */
+        /* Area di Anteprima Foglio */
+        .preview-area {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
         .paper-container {
             width: 210mm;
             min-height: 297mm;
             padding: 10mm 12mm;
-            margin: 0 auto;
             background: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
             font-size: 10px;
             line-height: 1.15;
             position: relative;
         }
 
-        /* Scritta Areti testuale */
-        .brand-text {
-            font-size: 22px;
-            font-weight: bold;
-            color: #e6007e;
-            letter-spacing: -0.5px;
+        /* Logo Areti SVG */
+        .logo-svg {
+            width: 110px;
+            height: auto;
         }
 
         /* Header e Note destra */
@@ -115,24 +158,6 @@
             margin: 15px 0 20px 20px;
         }
 
-        /* Campi Editabili */
-        input.editable-field {
-            border: 1px solid #0056b3;
-            background-color: #eef6ff;
-            outline: none;
-            font-size: 11px;
-            font-weight: bold;
-            color: #000;
-            padding: 2px 4px;
-            border-radius: 2px;
-        }
-
-        input.editable-field:focus {
-            background-color: #fff;
-            border-color: #003d80;
-            box-shadow: 0 0 3px rgba(0,86,179,0.5);
-        }
-
         /* Form e Righe */
         .field-row {
             display: flex;
@@ -145,6 +170,21 @@
             flex-grow: 1;
             border-bottom: 1px dotted #000;
             margin: 0 4px;
+        }
+
+        .dynamic-val {
+            font-weight: bold;
+            color: #000;
+            padding: 0 4px;
+        }
+
+        /* Schema grafico linea e cabine */
+        .line-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 4px 0;
         }
 
         /* Tabelle Modulo */
@@ -197,10 +237,13 @@
         @media print {
             body {
                 background: none;
-                padding: 0;
+                overflow: visible;
             }
-            .actions-bar {
+            .sidebar {
                 display: none;
+            }
+            .preview-area {
+                padding: 0;
             }
             .paper-container {
                 box-shadow: none;
@@ -208,222 +251,315 @@
                 width: 100%;
                 padding: 8mm 8mm;
             }
-            input.editable-field {
-                border: none;
-                background: transparent;
-                padding: 0;
-            }
         }
     </style>
 </head>
 <body>
 
-    <div class="actions-bar">
-        <h2>Scheda Giunti MT - Areti</h2>
-        <div class="btn-group">
-            <button class="btn btn-secondary" onclick="window.print()">Stampa</button>
+    <!-- MENU LATERALE CON SELEZIONE A TENDINA -->
+    <div class="sidebar">
+        <h2>Compilazione Scheda MT</h2>
+        
+        <div class="form-group">
+            <label for="selectContratto">N° Contratto (Menu a tendina)</label>
+            <select id="selectContratto" onchange="handleSelectChange('selectContratto', 'customContratto', 'viewContratto')">
+                <option value="36/2104">36/2104</option>
+                <option value="36/2105">36/2105</option>
+                <option value="36/2106">36/2106</option>
+                <option value="custom">-- Altro (Inserimento manuale) --</option>
+            </select>
+            <input type="text" id="customContratto" placeholder="Digitazione manuale..." style="display: none; margin-top: 5px;" oninput="updatePreviewCustom('customContratto', 'viewContratto')">
+        </div>
+
+        <div class="form-group">
+            <label for="selectOperaio">Giuntista / Operaio (Menu a tendina)</label>
+            <select id="selectOperaio" onchange="handleSelectChange('selectOperaio', 'customOperaio', 'viewOperaio')">
+                <option value="TIZIANO DE BIANCHI">TIZIANO DE BIANCHI</option>
+                <option value="SIMONE MASTRANGELO">SIMONE MASTRANGELO</option>
+                <option value="GIORGIO GENOESE">GIORGIO GENOESE</option>
+                <option value="MARCO PROIETTI">MARCO PROIETTI</option>
+                <option value="ALESSIO CIRILLO">ALESSIO CIRILLO</option>
+                <option value="LORENZO PARTIGIANONI">LORENZO PARTIGIANONI</option>
+                <option value="custom">-- Altro (Inserimento manuale) --</option>
+            </select>
+            <input type="text" id="customOperaio" placeholder="Digitazione manuale..." style="display: none; margin-top: 5px;" oninput="updatePreviewCustom('customOperaio', 'viewOperaio')">
+        </div>
+
+        <div class="form-group">
+            <label for="selectBollato">Evento / Preventivo N° (Menu a tendina)</label>
+            <select id="selectBollato" onchange="handleSelectChange('selectBollato', 'customBollato', 'viewBollato')">
+                <option value="26ZE61UC09366">26ZE61UC09366</option>
+                <option value="26ZE61UC09367">26ZE61UC09367</option>
+                <option value="26ZE61UC09368">26ZE61UC09368</option>
+                <option value="custom">-- Altro (Inserimento manuale) --</option>
+            </select>
+            <input type="text" id="customBollato" placeholder="Digitazione manuale..." style="display: none; margin-top: 5px;" oninput="updatePreviewCustom('customBollato', 'viewBollato')">
+        </div>
+
+        <div class="form-group">
+            <label for="selectVia">Via / Indirizzo (Menu a tendina)</label>
+            <select id="selectVia" onchange="handleSelectChange('selectVia', 'customVia', 'viewVia')">
+                <option value="VIA LIBERO LEONARDI">VIA LIBERO LEONARDI</option>
+                <option value="VIA ARDUINO">VIA ARDUINO</option>
+                <option value="VIA DELLA LEGA LOMBARDA">VIA DELLA LEGA LOMBARDA</option>
+                <option value="VIA BRAVETTA">VIA BRAVETTA</option>
+                <option value="custom">-- Altro (Inserimento manuale) --</option>
+            </select>
+            <input type="text" id="customVia" placeholder="Digitazione manuale..." style="display: none; margin-top: 5px;" oninput="updatePreviewCustom('customVia', 'viewVia')">
+        </div>
+
+        <div class="btn-container">
             <button class="btn" onclick="generatePDF()">Scarica PDF</button>
+            <button class="btn btn-secondary" onclick="window.print()">Stampa</button>
         </div>
     </div>
 
-    <!-- Modulo A4 -->
-    <div class="paper-container" id="pdf-content">
-        
-        <!-- Header con Scritta Areti -->
-        <div class="top-section">
-            <div class="header-left">
-                <div style="display: flex; justify-content: space-between; align-items: baseline; width: 90%;">
-                    <!-- Scritta areti testuale -->
-                    <span class="brand-text">areti</span>
-                    <span style="font-size: 9px; font-weight: bold;">rev.2 marzo 2017</span>
-                </div>
-                
-                <div class="title-doc">
-                    Scheda dati giunti e terminali MT
-                </div>
-            </div>
-
-            <div class="header-right-box">
-                <div style="text-decoration: underline; font-weight: bold; margin-bottom: 4px;">Per interventi con PdL:</div>
-                a cura del Preposto areti che deve effettuare la Consegna Impianto<br><br>
-                <div style="text-decoration: underline; font-weight: bold; margin-bottom: 4px;">Per interventi privi di PdL:</div>
-                a cura del tecnico areti che gestisce il lavoro dell'impresa
-            </div>
-        </div>
-
-        <!-- Dati Generali Modulo -->
-        <div class="field-row">
-            <span class="font-bold" style="font-size: 11px;">Impresa</span> &nbsp;&nbsp;
-            <span class="font-bold" style="font-size: 11px;">IMPRESA PERFETTI LUCIANO SRL</span>
-            <span class="dots-line"></span>
-            <span class="font-bold">Contratto</span> &nbsp; <span>36/2104</span>
-        </div>
-
-        <div class="field-row">
-            <span>Ore</span> <span class="dots-line" style="max-width: 120px;"></span>
-            <span class="font-bold">Giorno</span> &nbsp;&nbsp; <span>00/00/2025</span>
-            <span class="dots-line"></span>
-        </div>
-
-        <!-- CAMPI EDITABILI: Evento (Bollato) e Via -->
-        <div class="field-row">
-            <span class="font-bold">Evento o Preventivo N°</span> &nbsp;
-            <input type="text" class="editable-field" id="bollato" value="26ZE61UC09366" style="width: 160px;">
-            <span class="dots-line" style="max-width: 40px;"></span>
-            <span class="font-bold">del</span> &nbsp; <span class="dots-line" style="max-width: 80px;"></span>
-            <span class="font-bold">Bollato</span> &nbsp; <span class="dots-line"></span>
-        </div>
-
-        <div class="field-row">
-            <span class="font-bold">Via</span> &nbsp;&nbsp;
-            <input type="text" class="editable-field" id="via" value="VIA LIBERO LEONARDI" style="flex-grow: 1;">
-        </div>
-
-        <div class="field-row" style="margin-top: 10px;">
-            <span style="font-size: 8.5px;">Cabina Primaria</span> <span class="dots-line"></span>
-            <span style="font-size: 8.5px;">Linea</span> <span class="dots-line"></span>
-            <span style="font-size: 8.5px;">C.S.</span> <span class="dots-line"></span>
-        </div>
-
-        <div class="field-row">
-            <span style="font-size: 8.5px;">Tratto da Cabina Secondaria</span> <span class="dots-line"></span>
-            <span style="font-size: 8.5px;">a Cabina Secondaria</span> <span class="dots-line"></span>
-        </div>
-
-        <!-- CAMPO EDITABILE: Operaio / Giuntista -->
-        <div style="border: 1px solid #000; padding: 6px; margin: 8px 0;">
-            <div class="field-row" style="margin: 0;">
-                <span class="font-bold" style="font-size: 12px; width: 140px;">Giuntista/i impresa</span>
-                <input type="text" class="editable-field" id="operaio" value="TIZIANO DE BIANCHI" style="flex-grow: 1;">
-            </div>
-        </div>
-
-        <!-- Tipologia Accessorio -->
-        <table>
-            <tr>
-                <td style="width: 30%; vertical-align: top;">
-                    <div style="margin-bottom: 3px;"><span class="font-bold" style="text-decoration: underline;">nuovo accessorio</span></div>
-                    <div><span class="checkbox-box">X</span> giunto</div>
-                    <div><span class="checkbox-box"></span> terminale</div>
-                </td>
-                <td style="width: 30%; vertical-align: top;">
-                    <div><span class="checkbox-box"></span> termorestringente</div>
-                    <div><span class="checkbox-box"></span> autorestringente</div>
-                    <div><span class="checkbox-box"></span> sconnettibile</div>
-                </td>
-                <td style="width: 40%; vertical-align: top;">
-                    <div><span class="checkbox-box"></span> giunto 24kV</div>
-                    <div><span class="checkbox-box"></span> giunto 36kV</div>
-                    <div><span class="checkbox-box"></span> giunto riparazione 24 kV</div>
-                    <div><span class="checkbox-box"></span> giunto riparazione 36 kV</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">fornitore</td>
-                <td>
-                    <div class="field-row" style="margin: 0;">
-                        <span>cod. SAP</span> &nbsp;&nbsp;&nbsp;&nbsp; <span class="font-bold">1217277</span>
+    <!-- ANTEPRIMA FOGLIO A4 -->
+    <div class="preview-area">
+        <div class="paper-container" id="pdf-content">
+            
+            <!-- Header con Logo Areti originale -->
+            <div class="top-section">
+                <div class="header-left">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 90%;">
+                        <!-- Logo Areti SVG fedele -->
+                        <svg class="logo-svg" viewBox="0 0 160 50">
+                            <defs>
+                                <linearGradient id="gradient-areti" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#0080ff" />
+                                    <stop offset="50%" stop-color="#e6007e" />
+                                    <stop offset="100%" stop-color="#ff9900" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M 25 38 C 10 38 5 25 18 15 C 30 5 42 18 35 32 C 30 40 12 42 22 25" fill="none" stroke="url(#gradient-areti)" stroke-width="6" stroke-linecap="round"/>
+                            <text x="50" y="34" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#e6007e" letter-spacing="-1">areti</text>
+                        </svg>
+                        <span style="font-size: 9px; font-weight: bold;">rev.2 marzo 2017</span>
                     </div>
-                </td>
-            </tr>
-        </table>
+                    
+                    <div class="title-doc">
+                        Scheda dati giunti e terminali MT
+                    </div>
+                </div>
 
-        <!-- Rilievi Propedeutici -->
-        <div class="section-header-box">
-            <span class="font-bold" style="text-decoration: underline;">Rilievi propedeutici alla consegna dell'impianto, o all'autorizzazione del tecnico areti che gestisce il lavoro</span><br>
-            <span style="font-style: italic; font-size: 8.5px;">(la Consegna Impianto o l'autorizzazione sarà effettuata solo se i seguenti parametri risultano tutti regolari)</span>
-        </div>
-
-        <table>
-            <tr>
-                <td style="width: 82%;"><span class="font-bold" style="text-decoration: underline;">Qualifica Giuntista</span> <i>(rilevabile dal tesserino con foto rilasciato da ACEA)</i></td>
-                <td style="width: 18%;" class="text-center font-bold">
-                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
-                </td>
-            </tr>
-            <tr>
-                <td><span class="font-bold" style="text-decoration: underline;">Attrezzatura idonea</span></td>
-                <td class="text-center font-bold">
-                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
-                </td>
-            </tr>
-            <tr>
-                <td><span class="font-bold" style="text-decoration: underline;">Integrità confezione del giunto e congruità</span> &nbsp;&nbsp; (1)</td>
-                <td class="text-center font-bold">
-                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
-                </td>
-            </tr>
-            <tr>
-                <td><span class="font-bold" style="text-decoration: underline;">Corrette condizioni ambientali</span> <i>(idoneità buca ~3X1, telo plastica, tenda se necessaria, ecc…)</i></td>
-                <td class="text-center font-bold">
-                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
-                </td>
-            </tr>
-            <tr>
-                <td><span class="font-bold" style="text-decoration: underline;">Possesso targa giunto da apporre dopo il confezionamento</span></td>
-                <td class="text-center font-bold">
-                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
-                </td>
-            </tr>
-        </table>
-
-        <div class="footer-note">
-            <i>(1) - Nominativo del Tecnico dispacciato che, <span style="text-decoration: underline; font-weight: bold;">in emergenza per la rialimentazione di utenze</span>, autorizza l'esecuzione dell'accessorio con materiale non conforme all'unificazione e che provvederà, <span style="text-decoration: underline; font-weight: bold;">prima del ripristino dello scavo</span>, a <span style="text-decoration: underline; font-weight: bold;">farlo rimuovere e realizzarlo con materiale unificato</span></i>
-            <div class="dots-line" style="margin-top: 4px; height: 12px;"></div>
-        </div>
-
-        <!-- Repertazione Accessorio Guasto -->
-        <div class="section-header-box" style="margin-top: 10px;">
-            <span class="font-bold">REPERTAZIONE ACCESSORIO GUASTO</span><br>
-            <span style="font-size: 8.5px;">(solo giunti confezionati da meno di 3 anni e non danneggiati da terzi)</span>
-        </div>
-
-        <table>
-            <tr>
-                <td style="width: 70%;" class="font-bold">Presenza targa identificativa <span style="font-weight: normal;">(da allegare al presente modello)</span></td>
-                <td style="width: 30%;" class="text-center font-bold">
-                    <span class="checkbox-box"></span> SI &nbsp;&nbsp;&nbsp;&nbsp; <span class="checkbox-box"></span> NO
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" style="height: 45px; vertical-align: top;">
-                    <div class="font-bold">Eventuali segni visibili all'atto della rimozione</div>
-                    <div style="font-size: 8.5px;">(schiacciamento, materiale di riempimento non idoneo, danneggiamento, ecc…)</div>
-                    <div class="dots-line" style="margin-top: 15px;"></div>
-                </td>
-            </tr>
-        </table>
-
-        <div class="section-header-box" style="font-size: 8.5px;">
-            In caso di assenza di targhetta identificativa, i seguenti dati devono essere reperiti dal tecnico che effettua la contabilità del nuovo accessorio
-        </div>
-
-        <div class="field-row">
-            <span>Impresa esecutrice</span> <span class="dots-line"></span>
-        </div>
-        <div class="field-row">
-            <span>N° Contratto</span> <span class="dots-line"></span>
-        </div>
-        <div class="field-row">
-            <span>Esecutore accessorio guasto</span> <span class="dots-line"></span>
-        </div>
-
-        <!-- Firme -->
-        <div style="display: flex; justify-content: space-between; margin-top: 25px;">
-            <div style="width: 45%; text-align: center;">
-                <div class="dots-line" style="margin-bottom: 4px;"></div>
-                <div style="font-size: 8px;">Firma del Responsabile della Direzione lavori</div>
+                <div class="header-right-box">
+                    <div style="text-decoration: underline; font-weight: bold; margin-bottom: 4px;">Per interventi con PdL:</div>
+                    a cura del Preposto <span style="text-decoration: underline;">areti</span> che deve effettuare la Consegna Impianto<br><br>
+                    <div style="text-decoration: underline; font-weight: bold; margin-bottom: 4px;">Per interventi privi di PdL:</div>
+                    a cura del tecnico <span style="text-decoration: underline;">areti</span> che gestisce il lavoro dell'impresa
+                </div>
             </div>
-            <div style="width: 45%; text-align: center;">
-                <div class="dots-line" style="margin-bottom: 4px;"></div>
-                <div style="font-size: 8px;">Firma del Preposto areti / Tecnico che gestisce il lavoro</div>
-            </div>
-        </div>
 
-        <div class="text-right" style="font-size: 8px; margin-top: 8px;">scheda giunti 1 di 2</div>
+            <!-- Dati Generali -->
+            <div class="field-row">
+                <span class="font-bold" style="font-size: 11px;">Impresa</span> &nbsp;&nbsp;
+                <span class="font-bold" style="font-size: 11px;">IMPRESA PERFETTI LUCIANO SRL</span>
+                <span class="dots-line"></span>
+                <span class="font-bold">Contratto</span> &nbsp;
+                <span id="viewContratto" class="dynamic-val">36/2104</span>
+            </div>
+
+            <div class="field-row">
+                <span>Ore</span> <span class="dots-line" style="max-width: 120px;"></span>
+                <span class="font-bold">Giorno</span> &nbsp;&nbsp; <span>00/00/2025</span>
+                <span class="dots-line"></span>
+            </div>
+
+            <div class="field-row">
+                <span class="font-bold">Evento o Preventivo N°</span> &nbsp;
+                <span class="dots-line" style="max-width: 30px;"></span>
+                <span class="font-bold">del</span> &nbsp; <span class="dots-line" style="max-width: 80px;"></span>
+                <span class="font-bold">Bollato</span> &nbsp;
+                <span id="viewBollato" class="dynamic-val">26ZE61UC09366</span>
+                <span class="dots-line"></span>
+            </div>
+
+            <div class="field-row">
+                <span class="font-bold">Via</span> &nbsp;&nbsp;
+                <span id="viewVia" class="dynamic-val">VIA LIBERO LEONARDI</span>
+                <span class="dots-line"></span>
+            </div>
+
+            <!-- Schema di Linea -->
+            <div class="field-row" style="margin-top: 10px;">
+                <span style="font-size: 8.5px;">Cabina Primaria</span> <span class="dots-line"></span>
+                <div style="text-align: center; margin: 0 10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" fill="none" stroke="#000" stroke-width="1.5"/>
+                        <path d="M 12 3 C 7 3 7 21 12 21 C 17 21 17 3 12 3" fill="none" stroke="#000" stroke-width="1.5"/>
+                    </svg>
+                    <div style="font-size: 8px;">Linea</div>
+                </div>
+                <span class="dots-line"></span>
+                <span style="font-size: 8.5px;">C.S.</span> <span class="dots-line"></span>
+            </div>
+
+            <div class="field-row">
+                <span style="font-size: 8.5px;">Tratto da Cabina Secondaria</span> <span class="dots-line"></span>
+                <span style="font-size: 8.5px;">a Cabina Secondaria</span> <span class="dots-line"></span>
+            </div>
+
+            <!-- Box Giuntista con Icona Elmetto/Sicurezza -->
+            <div style="border: 1px solid #000; padding: 6px; margin: 8px 0; position: relative;">
+                <div class="field-row" style="margin: 0; align-items: center;">
+                    <span class="font-bold" style="font-size: 12px; width: 140px;">Giuntista/i impresa</span>
+                    <span id="viewOperaio" class="dynamic-val" style="font-size: 11px;">TIZIANO DE BIANCHI</span>
+                    <span class="dots-line"></span>
+                    <div style="border: 1px solid #000; padding: 2px 4px; margin-left: 8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2">
+                            <path d="M2 18h20M4 18v-4a8 8 0 0116 0v4M12 2v4"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tipologia Accessorio -->
+            <table>
+                <tr>
+                    <td style="width: 30%; vertical-align: top;">
+                        <div style="margin-bottom: 3px;"><span class="font-bold" style="text-decoration: underline;">nuovo accessorio</span></div>
+                        <div><span class="checkbox-box">X</span> giunto</div>
+                        <div><span class="checkbox-box"></span> terminale</div>
+                    </td>
+                    <td style="width: 30%; vertical-align: top;">
+                        <div><span class="checkbox-box"></span> termorestringente</div>
+                        <div><span class="checkbox-box"></span> autorestringente</div>
+                        <div><span class="checkbox-box"></span> sconnettibile</div>
+                    </td>
+                    <td style="width: 40%; vertical-align: top;">
+                        <div><span class="checkbox-box"></span> giunto 24kV</div>
+                        <div><span class="checkbox-box"></span> giunto 36kV</div>
+                        <div><span class="checkbox-box"></span> giunto riparazione 24 kV</div>
+                        <div><span class="checkbox-box"></span> giunto riparazione 36 kV</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">fornitore</td>
+                    <td>
+                        <div class="field-row" style="margin: 0;">
+                            <span>cod. SAP</span> &nbsp;&nbsp;&nbsp;&nbsp; <span class="font-bold">1217277</span>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Rilievi Propedeutici -->
+            <div class="section-header-box">
+                <span class="font-bold" style="text-decoration: underline;">Rilievi propedeutici alla consegna dell'impianto, o all'autorizzazione del tecnico <span style="text-decoration: underline;">areti</span> che gestisce il lavoro</span><br>
+                <span style="font-style: italic; font-size: 8.5px;">(la Consegna Impianto o l'autorizzazione sarà effettuata solo se i seguenti parametri risultano tutti regolari)</span>
+            </div>
+
+            <table>
+                <tr>
+                    <td style="width: 82%;"><span class="font-bold" style="text-decoration: underline;">Qualifica Giuntista</span> <i>(rilevabile dal tesserino con foto rilasciato da ACEA)</i></td>
+                    <td style="width: 18%;" class="text-center font-bold">
+                        <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="font-bold" style="text-decoration: underline;">Attrezzatura idonea</span></td>
+                    <td class="text-center font-bold">
+                        <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="font-bold" style="text-decoration: underline;">Integrità confezione del giunto e congruità</span> &nbsp;&nbsp; (1)</td>
+                    <td class="text-center font-bold">
+                        <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="font-bold" style="text-decoration: underline;">Corrette condizioni ambientali</span> <i>(idoneità buca ~3X1, telo plastica, tenda se necessaria, ecc…)</i></td>
+                    <td class="text-center font-bold">
+                        <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="font-bold" style="text-decoration: underline;">Possesso targa giunto da apporre dopo il confezionamento</span></td>
+                    <td class="text-center font-bold">
+                        <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                    </td>
+                </tr>
+            </table>
+
+            <div class="footer-note">
+                <i>(1) - Nominativo del Tecnico dispacciato che, <span style="text-decoration: underline; font-weight: bold;">in emergenza per la rialimentazione di utenze</span>, autorizza l'esecuzione dell'accessorio con materiale non conforme all'unificazione e che provvederà, <span style="text-decoration: underline; font-weight: bold;">prima del ripristino dello scavo</span>, a <span style="text-decoration: underline; font-weight: bold;">farlo rimuovere e realizzarlo con materiale unificato</span></i>
+                <div class="dots-line" style="margin-top: 4px; height: 12px;"></div>
+            </div>
+
+            <!-- Repertazione Accessorio Guasto -->
+            <div class="section-header-box" style="margin-top: 10px;">
+                <span class="font-bold">REPERTAZIONE ACCESSORIO GUASTO</span><br>
+                <span style="font-size: 8.5px;">(solo giunti confezionati da meno di 3 anni e non danneggiati da terzi)</span>
+            </div>
+
+            <table>
+                <tr>
+                    <td style="width: 70%;" class="font-bold">Presenza targa identificativa <span style="font-weight: normal;">(da allegare al presente modello)</span></td>
+                    <td style="width: 30%;" class="text-center font-bold">
+                        <span class="checkbox-box"></span> SI &nbsp;&nbsp;&nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="height: 45px; vertical-align: top;">
+                        <div class="font-bold">Eventuali segni visibili all'atto della rimozione</div>
+                        <div style="font-size: 8.5px;">(schiacciamento, materiale di riempimento non idoneo, danneggiamento, ecc…)</div>
+                        <div class="dots-line" style="margin-top: 15px;"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="section-header-box" style="font-size: 8.5px;">
+                In caso di assenza di targhetta identificativa, i seguenti dati devono essere reperiti dal tecnico che effettua la contabilità del nuovo accessorio
+            </div>
+
+            <div class="field-row">
+                <span>Impresa esecutrice</span> <span class="dots-line"></span>
+            </div>
+            <div class="field-row">
+                <span>N° Contratto</span> <span class="dots-line"></span>
+            </div>
+            <div class="field-row">
+                <span>Esecutore accessorio guasto</span> <span class="dots-line"></span>
+            </div>
+
+            <!-- Firme -->
+            <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+                <div style="width: 45%; text-align: center;">
+                    <div class="dots-line" style="margin-bottom: 4px;"></div>
+                    <div style="font-size: 8px;">Firma del Responsabile della Direzione lavori</div>
+                </div>
+                <div style="width: 45%; text-align: center;">
+                    <div class="dots-line" style="margin-bottom: 4px;"></div>
+                    <div style="font-size: 8px;">Firma del Preposto <span style="text-decoration: underline;">areti</span> / Tecnico che gestisce il lavoro</div>
+                </div>
+            </div>
+
+            <div class="text-right" style="font-size: 8px; margin-top: 8px;">scheda giunti 1 di 2</div>
+        </div>
     </div>
 
     <script>
+        function handleSelectChange(selectId, inputId, viewId) {
+            const select = document.getElementById(selectId);
+            const customInput = document.getElementById(inputId);
+            const viewTarget = document.getElementById(viewId);
+
+            if (select.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.focus();
+                viewTarget.innerText = customInput.value || '...';
+            } else {
+                customInput.style.display = 'none';
+                viewTarget.innerText = select.value;
+            }
+        }
+
+        function updatePreviewCustom(inputId, viewId) {
+            const customInput = document.getElementById(inputId);
+            document.getElementById(viewId).innerText = customInput.value || '...';
+        }
+
         function generatePDF() {
             const element = document.getElementById('pdf-content');
             
