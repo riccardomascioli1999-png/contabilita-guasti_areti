@@ -3,437 +3,440 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dettaglio Contabile Guasto - Areti MT/BT</title>
+    <title>Scheda dati giunti e terminali MT - Areti</title>
+    <!-- Libreria per la generazione dinamica del PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root {
-            --primary: #800055;
-            --primary-light: #fdf2f7;
-            --excel-yellow: #ffff00;
-            --excel-header-yellow: #fff2cc;
-            --excel-green: #d9ebd3;
-            --border: #333333;
-            --border-light: #cccccc;
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        * { box-sizing: border-box; }
-
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
             margin: 0;
-            padding: 15px;
-            font-size: 11px;
+            padding: 20px;
+            background-color: #f4f4f9;
             color: #000;
         }
 
-        .app-container {
-            max-width: 100%;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 6px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        }
-
-        .header-bar {
+        .actions-bar {
+            max-width: 210mm;
+            margin: 0 auto 15px auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 8px;
-            margin-bottom: 15px;
+            background: #fff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .header-bar h1 {
+        .actions-bar h2 {
             margin: 0;
-            font-size: 18px;
-            color: var(--primary);
+            font-size: 16px;
+            color: #333;
         }
 
-        .header-bar .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
-            letter-spacing: 1px;
-        }
-
-        .grid-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-            background-color: var(--primary-light);
-            padding: 10px;
-            border: 1px solid #f5c2df;
-            border-radius: 4px;
-        }
-
-        .info-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .info-group label {
-            font-weight: bold;
-            font-size: 9px;
-            text-transform: uppercase;
-            color: #555;
-            margin-bottom: 3px;
-        }
-
-        .info-group input {
-            padding: 5px;
-            border: 1px solid var(--border-light);
-            border-radius: 3px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        /* Panel Controls */
-        .panel-controls {
-            background-color: #eef4fc;
-            border: 1px solid #b8d5f3;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .panel-controls h3 {
-            margin: 0 0 8px 0;
-            font-size: 12px;
-            color: #0056b3;
-        }
-
-        .control-row {
+        .btn-group {
             display: flex;
             gap: 10px;
-            align-items: flex-end;
-            flex-wrap: wrap;
-        }
-
-        .control-row select, .control-row input {
-            padding: 6px;
-            border: 1px solid var(--border-light);
-            border-radius: 3px;
-            font-size: 11px;
         }
 
         .btn {
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 3px;
-            cursor: pointer;
+            padding: 8px 16px;
+            font-size: 13px;
             font-weight: bold;
-            font-size: 11px;
+            color: #fff;
+            background-color: #0056b3;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
-        .btn:hover { background-color: #003d80; }
-        .btn-success { background-color: #28a745; }
-        .btn-success:hover { background-color: #1e7e34; }
-        .btn-danger { background-color: #dc3545; padding: 2px 5px; font-size: 10px; }
-
-        /* Excel Matrix Table */
-        .table-responsive {
-            overflow-x: auto;
-            border: 1px solid var(--border);
-            margin-bottom: 15px;
+        .btn:hover {
+            background-color: #003d80;
         }
 
-        table.excel-table {
-            border-collapse: collapse;
-            width: 100%;
-            min-width: 1500px;
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* Contenitore foglio A4 */
+        .paper-container {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 10mm 12mm;
+            margin: 0 auto;
             background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            font-size: 10px;
+            line-height: 1.15;
+            position: relative;
         }
 
-        table.excel-table th, table.excel-table td {
-            border: 1px solid var(--border);
-            padding: 4px;
+        /* Scritta Areti testuale */
+        .brand-text {
+            font-size: 22px;
+            font-weight: bold;
+            color: #e6007e;
+            letter-spacing: -0.5px;
+        }
+
+        /* Header e Note destra */
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .header-left {
+            width: 65%;
+        }
+
+        .header-right-box {
+            width: 32%;
+            border: 1.5px solid #000;
+            padding: 6px;
+            font-size: 8.5px;
+            line-height: 1.25;
             text-align: center;
-            vertical-align: middle;
+        }
+
+        .title-doc {
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: underline;
+            text-decoration-style: double;
+            margin: 15px 0 20px 20px;
+        }
+
+        /* Campi Editabili */
+        input.editable-field {
+            border: 1px solid #0056b3;
+            background-color: #eef6ff;
+            outline: none;
+            font-size: 11px;
+            font-weight: bold;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        input.editable-field:focus {
+            background-color: #fff;
+            border-color: #003d80;
+            box-shadow: 0 0 3px rgba(0,86,179,0.5);
+        }
+
+        /* Form e Righe */
+        .field-row {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 8px;
             font-size: 10px;
         }
 
-        .row-macro { background-color: var(--excel-yellow); font-weight: bold; height: 26px; }
-        .row-sub { background-color: #ff0000; color: #ffffff; font-weight: bold; height: 20px; }
-        .row-desc { height: 95px; text-align: left !important; vertical-align: top !important; font-size: 9px; line-height: 1.2; padding: 6px !important; }
-        .row-code { background-color: var(--excel-yellow); font-weight: bold; height: 110px; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10px; }
-        .row-qta-input { height: 32px; }
-        .row-qta-input input { width: 90%; text-align: center; font-weight: bold; font-size: 12px; border: 1px solid #0056b3; background-color: #ffffcc; }
-        
-        .bg-totals { background-color: #f2f2f2; font-weight: bold; }
-        .bg-valore-unitario { background-color: #ffffff; font-weight: bold; }
-        .bg-prestazioni { background-color: #ffffff; font-weight: bold; }
-
-        .big-total-container {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-top: 15px;
+        .dots-line {
+            flex-grow: 1;
+            border-bottom: 1px dotted #000;
+            margin: 0 4px;
         }
 
-        .big-total-box {
-            background-color: var(--excel-yellow);
-            border: 2px solid #000000;
-            padding: 10px 20px;
-            font-size: 18px;
+        /* Tabelle Modulo */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 8px;
+        }
+
+        td, th {
+            border: 1px solid #000;
+            padding: 3px 5px;
+            vertical-align: middle;
+            font-size: 9.5px;
+        }
+
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+
+        .checkbox-box {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #000;
+            text-align: center;
+            line-height: 14px;
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            font-size: 11px;
+            margin-right: 4px;
+            vertical-align: middle;
         }
 
+        .section-header-box {
+            font-weight: bold;
+            font-size: 9.5px;
+            margin: 8px 0 4px 0;
+            border: 1px solid #000;
+            padding: 4px;
+            text-align: center;
+        }
+
+        .footer-note {
+            font-size: 8px;
+            margin-top: 4px;
+            line-height: 1.15;
+        }
+
+        /* Regole Stampa e PDF */
         @media print {
-            .no-print { display: none !important; }
-            body { background: white; padding: 0; }
-            .app-container { box-shadow: none; border: none; padding: 0; width: 100%; }
-            .table-responsive { overflow-x: visible; }
-            @page { size: A4 landscape; margin: 8mm; }
+            body {
+                background: none;
+                padding: 0;
+            }
+            .actions-bar {
+                display: none;
+            }
+            .paper-container {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                padding: 8mm 8mm;
+            }
+            input.editable-field {
+                border: none;
+                background: transparent;
+                padding: 0;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header-bar">
-        <h1>Dettaglio Contabile Guasto MT/BT</h1>
-        <div class="logo">areti</div>
-    </div>
-
-    <!-- Dati Intestazione -->
-    <div class="grid-info">
-        <div class="info-group">
-            <label>N° Evento / Bollato</label>
-            <input type="text" id="bollato" value="26ZE61UC09820">
-        </div>
-        <div class="info-group">
-            <label>N° ODL</label>
-            <input type="text" id="odl" value="201124751">
-        </div>
-        <div class="info-group">
-            <label>N° ODA</label>
-            <input type="text" id="oda" value="4206681491">
-        </div>
-        <div class="info-group">
-            <label>Impresa Esecutrice</label>
-            <input type="text" id="impresa" value="IMPRESA PERFETTI LUCIANO SRL">
-        </div>
-        <div class="info-group">
-            <label>Ribasso d'Asta (%)</label>
-            <input type="number" id="ribasso" value="6.65" step="0.01" onchange="renderMatrix()">
+    <div class="actions-bar">
+        <h2>Scheda Giunti MT - Areti</h2>
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="window.print()">Stampa</button>
+            <button class="btn" onclick="generatePDF()">Scarica PDF</button>
         </div>
     </div>
 
-    <!-- Pannello di Controllo Aggiunta Colonne -->
-    <div class="panel-controls no-print">
-        <h3>Aggiungi Prestazione al Dettaglio Misure (Prezziario Areti Completo)</h3>
-        <div class="control-row">
-            <select id="selectPrestazione" style="flex: 1; min-width: 320px;">
-                <option value="">-- Seleziona voce da aggiungere all'abaco --</option>
-            </select>
-            <button class="btn" onclick="aggiungiColonnaSelezionata()">+ Aggiungi Colonna</button>
-            <button class="btn btn-success" style="margin-left: auto;" onclick="window.print()">Stampa / Salva PDF A4</button>
-        </div>
-    </div>
-
-    <!-- Tabella Matrice Excel -->
-    <div class="table-responsive">
-        <table class="excel-table" id="matrixTable">
-            <thead>
-                <!-- Riga Macro Categoria -->
-                <tr class="row-macro" id="rowMacro">
-                    <td style="width: 140px; background-color: #fff;">Indirizzo</td>
-                </tr>
-                <!-- Riga Tensione / Sotto-categoria -->
-                <tr class="row-sub" id="rowSub">
-                    <td style="background-color: #fff; color: #000;">TENSIONE</td>
-                </tr>
-                <!-- Riga Descrizione Lavoro -->
-                <tr class="row-desc" id="rowDesc">
-                    <td style="font-weight: bold; background-color: #f9f9f9;">Descrizione Lavoro</td>
-                </tr>
-                <!-- Riga Codice Tariffa (Giallo Verticale) -->
-                <tr class="row-code" id="rowCode">
-                    <td style="writing-mode: horizontal-tb; transform: none; background-color: #fff;">Codice Tariffa</td>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Riga Input Quantità -->
-                <tr class="row-qta-input" id="rowInput">
-                    <td style="font-weight: bold; text-align: right;">Quantità Misurata</td>
-                </tr>
-                <!-- Riga Totale Q.tà -->
-                <tr class="bg-totals" id="rowQtaTot">
-                    <td style="text-align: right;">Q.TA' TOTALE</td>
-                </tr>
-                <!-- Riga Importo Unitario Base -->
-                <tr class="bg-totals" id="rowImpUnit">
-                    <td style="text-align: right;">IMPORTO UNITARIO (€)</td>
-                </tr>
-                <!-- Riga Valore Unitario Scontato -->
-                <tr class="bg-valore-unitario" id="rowValUnit">
-                    <td style="text-align: right;">VALORE UNITARIO (€)</td>
-                </tr>
-                <!-- Riga Totale Prestazioni per Colonna -->
-                <tr class="bg-prestazioni" id="rowTotPrest">
-                    <td style="text-align: right; font-weight: bold;">TOTALE PRESTAZIONI (€)</td>
-                </tr>
-                <!-- Riga Azione Elimina -->
-                <tr class="no-print" id="rowActions">
-                    <td style="text-align: right;">Rimuovi</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Box Totale Complessivo Spettante -->
-    <div class="big-total-container">
-        <div class="big-total-box">
-            <span>IMPORTO TOTALE:</span>
-            <span id="importoTotaleComplessivo">€ 6.933,77</span>
-        </div>
-    </div>
-</div>
-
-<script>
-    // PREZZIARIO UFFICIALE ARETI COMPLETO
-    const prezziarioCompleto = [
-        { cod: '20E.A01.01.02', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø125/160mm su sterrato', pBase: 45.37 },
-        { cod: '20E.A01.01.03', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø63-110mm (asfalto/selciato)', pBase: 51.91 },
-        { cod: '20E.A01.01.04', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø125/160mm (asfalto/selciato)', pBase: 64.13 },
-        { cod: '20E.A01.04.02', macro: 'BUCA GIUNTI + SAGGI', sub: 'MT', desc: 'Buca giunti MT su asfalto fino a mq 8', pBase: 1707.46 },
-        { cod: '20E.A01.04.08', macro: 'BUCA GIUNTI + SAGGI', sub: 'MT', desc: 'Saggi d\'indagine/buche per posa cavi (eccedenza buca giunti)', pBase: 154.96 },
-        { cod: '20E.C01.01.06', macro: 'POSA CAVI', sub: 'MT', desc: 'Linea MT', pBase: 3.90 },
-        { cod: '20E.C01.02.15', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Giunto MT terna', pBase: 433.98 },
-        { cod: '20E.I01.05.07', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Maggiorazione betonabile', pBase: 301.00 },
-        { cod: '20C.B04.02.01', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei primi 3 metri di nuova canalizzazione.', pBase: 266.80 },
-        { cod: '20C.B04.02.02', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei successivi metri oltre i primi 3 m. Al metro lineare.', pBase: 6.90 },
-        { cod: '20C.B04.02.04', macro: 'ARCHEOLOGIA', sub: '', desc: 'Compenso aggiuntivo alle prestazioni di sorveglianza archeologica per interventi nei giorni feriali dopo le ore 16,00 e nei giorni di sabato e festivi.', pBase: 125.35 },
-        { cod: '20C.D01.04.06', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Ripristino marciapiede in tappeto d\'usura', pBase: 12.62 },
-        { cod: '20C.D01.04.05', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Compenso aggiuntivo per la semplice rimozione dell\'asfalto colato laddovce non è necessario intervenire sul sottofondo, comprensivo del trasporto a discarica e dei relativi oneri di conferimento.', pBase: 5.38 },
-        { cod: '20C.A01.01.05', macro: 'BRANDIZZAZIONE', sub: '', desc: 'Brandizzazione cantiere fino a 20m', pBase: 100.00 },
-        { cod: '20C.A01.01.02', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio qualificato', pBase: 36.73 },
-        { cod: '20C.A01.01.03', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio specializzato', pBase: 39.60 },
-        { cod: '20C.A01.01.04', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio IV livello', pBase: 41.79 },
-        { cod: '20C.A02.02.02', macro: 'MEZZI', sub: 'ECONOMIE', desc: 'Stazionamento Autocarro 10t', pBase: 13.43 },
-        { cod: '20C.A02.02.04', macro: 'MEZZI', sub: 'ECONOMIE', desc: 'Stazionamento Autocarro 15mc', pBase: 30.29 },
-        { cod: '20C.A02.03.30', macro: 'MEZZI', sub: 'ECONOMIE', desc: 'Stazionamento Bobcat', pBase: 29.44 },
-        { cod: 'SIC.E 01 quater', macro: 'ONERI SICUREZZA', sub: 'SIC', desc: 'Oneri cantiere per buche asfalto', pBase: 181.09 },
-        { cod: 'SIC.E 08', macro: 'ONERI SICUREZZA', sub: 'SIC', desc: 'Oneri ripristino asfalto/colato/selciato oltre mq 20 fino a mq 40', pBase: 49.44 },
-        { cod: 'SIC.E 67', macro: 'ONERI SICUREZZA', sub: 'SIC', desc: 'Sicurezza riferita a prestazione 20C.A01.01.05', pBase: 10.02 }
-    ];
-
-    // Stato Colonne Correnti dell'intervento 26ZE61UC09820
-    let colonneAttive = [
-        { cod: '20E.A01.01.02', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø125/160mm su sterrato', pBase: 45.37, qta: 0 },
-        { cod: '20E.A01.04.02', macro: 'BUCA GIUNTI + SAGGI', sub: 'MT', desc: 'Buca giunti MT su asfalto fino a mq 8', pBase: 1707.46, qta: 1 },
-        { cod: '20E.A01.04.08', macro: 'BUCA GIUNTI + SAGGI', sub: 'MT', desc: 'Saggi d\'indagine/buche per posa cavi (eccedenza buca giunti)', pBase: 154.96, qta: 10 },
-        { cod: '20E.C01.01.06', macro: 'POSA CAVI', sub: 'MT', desc: 'Linea MT', pBase: 3.90, qta: 4 },
-        { cod: '20E.C01.02.15', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Giunto MT terna', pBase: 433.98, qta: 2 },
-        { cod: '20E.I01.05.07', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Maggiorazione betonabile', pBase: 301.00, qta: 1 },
-        { cod: '20C.B04.02.01', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei primi 3 metri di nuova canalizzazione.', pBase: 266.80, qta: 1 },
-        { cod: '20C.B04.02.02', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei successivi metri oltre i primi 3 m. Al metro lineare.', pBase: 6.90, qta: 27 },
-        { cod: '20C.B04.02.04', macro: 'ARCHEOLOGIA', sub: '', desc: 'Compenso aggiuntivo alle prestazioni di sorveglianza archeologica per interventi nei giorni feriali dopo le ore 16,00 e nei giorni di sabato e festivi.', pBase: 125.35, qta: 1 },
-        { cod: '20C.D01.04.06', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Ripristino marciapiede in tappeto d\'usura', pBase: 12.62, qta: 36 },
-        { cod: '20C.D01.04.05', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Compenso aggiuntivo per la semplice rimozione dell\'asfalto colato laddovce non è necessario intervenire sul sottofondo, comprensivo del trasporto a discarica e dei relativi oneri di conferimento.', pBase: 5.38, qta: 18 },
-        { cod: '20C.A01.01.05', macro: 'BRANDIZZAZIONE', sub: '', desc: 'Brandizzazione cantiere fino a 20m', pBase: 100.00, qta: 1 },
-        { cod: '20C.A01.01.02', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio qualificato', pBase: 36.73, qta: 6.4 }
-    ];
-
-    function popolaDropdown() {
-        const select = document.getElementById('selectPrestazione');
-        prezziarioCompleto.forEach((item, idx) => {
-            const opt = document.createElement('option');
-            opt.value = idx;
-            opt.textContent = `[${item.cod}] ${item.desc} (${item.pBase.toFixed(2)} €)`;
-            select.appendChild(opt);
-        });
-    }
-
-    function aggiungiColonnaSelezionata() {
-        const idx = document.getElementById('selectPrestazione').value;
-        if (idx === "") return;
-        const item = prezziarioCompleto[idx];
+    <!-- Modulo A4 -->
+    <div class="paper-container" id="pdf-content">
         
-        colonneAttive.push({
-            cod: item.cod,
-            macro: item.macro,
-            sub: item.sub,
-            desc: item.desc,
-            pBase: item.pBase,
-            qta: 1
-        });
+        <!-- Header con Scritta Areti -->
+        <div class="top-section">
+            <div class="header-left">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; width: 90%;">
+                    <!-- Scritta areti testuale -->
+                    <span class="brand-text">areti</span>
+                    <span style="font-size: 9px; font-weight: bold;">rev.2 marzo 2017</span>
+                </div>
+                
+                <div class="title-doc">
+                    Scheda dati giunti e terminali MT
+                </div>
+            </div>
 
-        renderMatrix();
-    }
+            <div class="header-right-box">
+                <div style="text-decoration: underline; font-weight: bold; margin-bottom: 4px;">Per interventi con PdL:</div>
+                a cura del Preposto areti che deve effettuare la Consegna Impianto<br><br>
+                <div style="text-decoration: underline; font-weight: bold; margin-bottom: 4px;">Per interventi privi di PdL:</div>
+                a cura del tecnico areti che gestisce il lavoro dell'impresa
+            </div>
+        </div>
 
-    function rimuoviColonna(index) {
-        colonneAttive.splice(index, 1);
-        renderMatrix();
-    }
+        <!-- Dati Generali Modulo -->
+        <div class="field-row">
+            <span class="font-bold" style="font-size: 11px;">Impresa</span> &nbsp;&nbsp;
+            <span class="font-bold" style="font-size: 11px;">IMPRESA PERFETTI LUCIANO SRL</span>
+            <span class="dots-line"></span>
+            <span class="font-bold">Contratto</span> &nbsp; <span>36/2104</span>
+        </div>
 
-    function renderMatrix() {
-        const ribasso = parseFloat(document.getElementById('ribasso').value) || 0;
-        const molt = 1 - (ribasso / 100);
+        <div class="field-row">
+            <span>Ore</span> <span class="dots-line" style="max-width: 120px;"></span>
+            <span class="font-bold">Giorno</span> &nbsp;&nbsp; <span>00/00/2025</span>
+            <span class="dots-line"></span>
+        </div>
 
-        const rowMacro = document.getElementById('rowMacro');
-        const rowSub = document.getElementById('rowSub');
-        const rowDesc = document.getElementById('rowDesc');
-        const rowCode = document.getElementById('rowCode');
-        const rowInput = document.getElementById('rowInput');
-        const rowQtaTot = document.getElementById('rowQtaTot');
-        const rowImpUnit = document.getElementById('rowImpUnit');
-        const rowValUnit = document.getElementById('rowValUnit');
-        const rowTotPrest = document.getElementById('rowTotPrest');
-        const rowActions = document.getElementById('rowActions');
+        <!-- CAMPI EDITABILI: Evento (Bollato) e Via -->
+        <div class="field-row">
+            <span class="font-bold">Evento o Preventivo N°</span> &nbsp;
+            <input type="text" class="editable-field" id="bollato" value="26ZE61UC09366" style="width: 160px;">
+            <span class="dots-line" style="max-width: 40px;"></span>
+            <span class="font-bold">del</span> &nbsp; <span class="dots-line" style="max-width: 80px;"></span>
+            <span class="font-bold">Bollato</span> &nbsp; <span class="dots-line"></span>
+        </div>
 
-        rowMacro.innerHTML = '<td style="width: 140px; background-color: #fff;">Indirizzo</td>';
-        rowSub.innerHTML = '<td style="background-color: #fff; color: #000;">TENSIONE</td>';
-        rowDesc.innerHTML = '<td style="font-weight: bold; background-color: #f9f9f9;">Descrizione Lavoro</td>';
-        rowCode.innerHTML = '<td style="writing-mode: horizontal-tb; transform: none; background-color: #fff;">Codice Tariffa</td>';
-        rowInput.innerHTML = '<td style="font-weight: bold; text-align: right;">Quantità Misurata</td>';
-        rowQtaTot.innerHTML = '<td style="text-align: right;">Q.TA\' TOTALE</td>';
-        rowImpUnit.innerHTML = '<td style="text-align: right;">IMPORTO UNITARIO (€)</td>';
-        rowValUnit.innerHTML = '<td style="text-align: right;">VALORE UNITARIO (€)</td>';
-        rowTotPrest.innerHTML = '<td style="text-align: right; font-weight: bold;">TOTALE PRESTAZIONI (€)</td>';
-        rowActions.innerHTML = '<td style="text-align: right;">Rimuovi</td>';
+        <div class="field-row">
+            <span class="font-bold">Via</span> &nbsp;&nbsp;
+            <input type="text" class="editable-field" id="via" value="VIA LIBERO LEONARDI" style="flex-grow: 1;">
+        </div>
 
-        let sommaTotaleComplessivo = 0;
+        <div class="field-row" style="margin-top: 10px;">
+            <span style="font-size: 8.5px;">Cabina Primaria</span> <span class="dots-line"></span>
+            <span style="font-size: 8.5px;">Linea</span> <span class="dots-line"></span>
+            <span style="font-size: 8.5px;">C.S.</span> <span class="dots-line"></span>
+        </div>
 
-        colonneAttive.forEach((col, idx) => {
-            const isEsenteRibasso = col.cod.startsWith('SIC.') || col.cod === '20C.A01.01.05';
-            const vUnit = isEsenteRibasso ? col.pBase : col.pBase * molt;
-            const totPrest = col.qta * vUnit;
-            sommaTotaleComplessivo += totPrest;
+        <div class="field-row">
+            <span style="font-size: 8.5px;">Tratto da Cabina Secondaria</span> <span class="dots-line"></span>
+            <span style="font-size: 8.5px;">a Cabina Secondaria</span> <span class="dots-line"></span>
+        </div>
 
-            rowMacro.innerHTML += `<td>${col.macro}</td>`;
-            rowSub.innerHTML += `<td>${col.sub || '-'}</td>`;
-            rowDesc.innerHTML += `<td>${col.desc}</td>`;
-            rowCode.innerHTML += `<td>${col.cod}</td>`;
+        <!-- CAMPO EDITABILE: Operaio / Giuntista -->
+        <div style="border: 1px solid #000; padding: 6px; margin: 8px 0;">
+            <div class="field-row" style="margin: 0;">
+                <span class="font-bold" style="font-size: 12px; width: 140px;">Giuntista/i impresa</span>
+                <input type="text" class="editable-field" id="operaio" value="TIZIANO DE BIANCHI" style="flex-grow: 1;">
+            </div>
+        </div>
+
+        <!-- Tipologia Accessorio -->
+        <table>
+            <tr>
+                <td style="width: 30%; vertical-align: top;">
+                    <div style="margin-bottom: 3px;"><span class="font-bold" style="text-decoration: underline;">nuovo accessorio</span></div>
+                    <div><span class="checkbox-box">X</span> giunto</div>
+                    <div><span class="checkbox-box"></span> terminale</div>
+                </td>
+                <td style="width: 30%; vertical-align: top;">
+                    <div><span class="checkbox-box"></span> termorestringente</div>
+                    <div><span class="checkbox-box"></span> autorestringente</div>
+                    <div><span class="checkbox-box"></span> sconnettibile</div>
+                </td>
+                <td style="width: 40%; vertical-align: top;">
+                    <div><span class="checkbox-box"></span> giunto 24kV</div>
+                    <div><span class="checkbox-box"></span> giunto 36kV</div>
+                    <div><span class="checkbox-box"></span> giunto riparazione 24 kV</div>
+                    <div><span class="checkbox-box"></span> giunto riparazione 36 kV</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">fornitore</td>
+                <td>
+                    <div class="field-row" style="margin: 0;">
+                        <span>cod. SAP</span> &nbsp;&nbsp;&nbsp;&nbsp; <span class="font-bold">1217277</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Rilievi Propedeutici -->
+        <div class="section-header-box">
+            <span class="font-bold" style="text-decoration: underline;">Rilievi propedeutici alla consegna dell'impianto, o all'autorizzazione del tecnico areti che gestisce il lavoro</span><br>
+            <span style="font-style: italic; font-size: 8.5px;">(la Consegna Impianto o l'autorizzazione sarà effettuata solo se i seguenti parametri risultano tutti regolari)</span>
+        </div>
+
+        <table>
+            <tr>
+                <td style="width: 82%;"><span class="font-bold" style="text-decoration: underline;">Qualifica Giuntista</span> <i>(rilevabile dal tesserino con foto rilasciato da ACEA)</i></td>
+                <td style="width: 18%;" class="text-center font-bold">
+                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                </td>
+            </tr>
+            <tr>
+                <td><span class="font-bold" style="text-decoration: underline;">Attrezzatura idonea</span></td>
+                <td class="text-center font-bold">
+                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                </td>
+            </tr>
+            <tr>
+                <td><span class="font-bold" style="text-decoration: underline;">Integrità confezione del giunto e congruità</span> &nbsp;&nbsp; (1)</td>
+                <td class="text-center font-bold">
+                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                </td>
+            </tr>
+            <tr>
+                <td><span class="font-bold" style="text-decoration: underline;">Corrette condizioni ambientali</span> <i>(idoneità buca ~3X1, telo plastica, tenda se necessaria, ecc…)</i></td>
+                <td class="text-center font-bold">
+                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                </td>
+            </tr>
+            <tr>
+                <td><span class="font-bold" style="text-decoration: underline;">Possesso targa giunto da apporre dopo il confezionamento</span></td>
+                <td class="text-center font-bold">
+                    <span class="checkbox-box">X</span> SI &nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                </td>
+            </tr>
+        </table>
+
+        <div class="footer-note">
+            <i>(1) - Nominativo del Tecnico dispacciato che, <span style="text-decoration: underline; font-weight: bold;">in emergenza per la rialimentazione di utenze</span>, autorizza l'esecuzione dell'accessorio con materiale non conforme all'unificazione e che provvederà, <span style="text-decoration: underline; font-weight: bold;">prima del ripristino dello scavo</span>, a <span style="text-decoration: underline; font-weight: bold;">farlo rimuovere e realizzarlo con materiale unificato</span></i>
+            <div class="dots-line" style="margin-top: 4px; height: 12px;"></div>
+        </div>
+
+        <!-- Repertazione Accessorio Guasto -->
+        <div class="section-header-box" style="margin-top: 10px;">
+            <span class="font-bold">REPERTAZIONE ACCESSORIO GUASTO</span><br>
+            <span style="font-size: 8.5px;">(solo giunti confezionati da meno di 3 anni e non danneggiati da terzi)</span>
+        </div>
+
+        <table>
+            <tr>
+                <td style="width: 70%;" class="font-bold">Presenza targa identificativa <span style="font-weight: normal;">(da allegare al presente modello)</span></td>
+                <td style="width: 30%;" class="text-center font-bold">
+                    <span class="checkbox-box"></span> SI &nbsp;&nbsp;&nbsp;&nbsp; <span class="checkbox-box"></span> NO
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="height: 45px; vertical-align: top;">
+                    <div class="font-bold">Eventuali segni visibili all'atto della rimozione</div>
+                    <div style="font-size: 8.5px;">(schiacciamento, materiale di riempimento non idoneo, danneggiamento, ecc…)</div>
+                    <div class="dots-line" style="margin-top: 15px;"></div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-header-box" style="font-size: 8.5px;">
+            In caso di assenza di targhetta identificativa, i seguenti dati devono essere reperiti dal tecnico che effettua la contabilità del nuovo accessorio
+        </div>
+
+        <div class="field-row">
+            <span>Impresa esecutrice</span> <span class="dots-line"></span>
+        </div>
+        <div class="field-row">
+            <span>N° Contratto</span> <span class="dots-line"></span>
+        </div>
+        <div class="field-row">
+            <span>Esecutore accessorio guasto</span> <span class="dots-line"></span>
+        </div>
+
+        <!-- Firme -->
+        <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+            <div style="width: 45%; text-align: center;">
+                <div class="dots-line" style="margin-bottom: 4px;"></div>
+                <div style="font-size: 8px;">Firma del Responsabile della Direzione lavori</div>
+            </div>
+            <div style="width: 45%; text-align: center;">
+                <div class="dots-line" style="margin-bottom: 4px;"></div>
+                <div style="font-size: 8px;">Firma del Preposto areti / Tecnico che gestisce il lavoro</div>
+            </div>
+        </div>
+
+        <div class="text-right" style="font-size: 8px; margin-top: 8px;">scheda giunti 1 di 2</div>
+    </div>
+
+    <script>
+        function generatePDF() {
+            const element = document.getElementById('pdf-content');
             
-            rowInput.innerHTML += `<td><input type="number" step="0.01" value="${col.qta}" onchange="aggiornaQta(${idx}, this.value)"></td>`;
-            rowQtaTot.innerHTML += `<td>${col.qta.toFixed(2).replace('.', ',')}</td>`;
-            rowImpUnit.innerHTML += `<td>€ ${col.pBase.toFixed(2).replace('.', ',')}</td>`;
-            rowValUnit.innerHTML += `<td>€ ${vUnit.toFixed(2).replace('.', ',')}</td>`;
-            rowTotPrest.innerHTML += `<td>€ ${totPrest.toFixed(2).replace('.', ',')}</td>`;
-            rowActions.innerHTML += `<td><button class="btn btn-danger" onclick="rimuoviColonna(${idx})">X</button></td>`;
-        });
+            const options = {
+                margin:       [5, 5, 5, 5],
+                filename:     'SCHEDA_GIUNTI_MT.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
 
-        document.getElementById('importoTotaleComplessivo').innerText = `€ ${sommaTotaleComplessivo.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-
-    function aggiornaQta(index, val) {
-        colonneAttive[index].qta = parseFloat(val) || 0;
-        renderMatrix();
-    }
-
-    window.onload = function() {
-        popolaDropdown();
-        renderMatrix();
-    };
-</script>
-
+            html2pdf().set(options).from(element).save();
+        }
+    </script>
 </body>
 </html>
