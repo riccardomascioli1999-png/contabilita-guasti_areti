@@ -3,332 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contabilità Completa Guasto MT/BT - Areti</title>
+    <title>Contabilità Dettaglio Guasto - Areti MT/BT</title>
     <style>
         :root {
             --primary: #800055;
-            --secondary: #0056b3;
-            --bg: #f4f6f9;
-            --card: #ffffff;
-            --border: #cccccc;
+            --primary-light: #fdf2f7;
+            --excel-yellow: #ffff00;
+            --excel-header-yellow: #fff2cc;
+            --excel-green: #d9ebd3;
+            --border: #333333;
+            --border-light: #cccccc;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: Arial, sans-serif;
-            background-color: var(--bg);
+            background-color: #f4f6f9;
             margin: 0;
-            padding: 20px;
-            color: #333;
-            font-size: 13px;
+            padding: 15px;
+            font-size: 11px;
+            color: #000;
         }
 
-        .container {
-            max-width: 1050px;
+        .app-container {
+            max-width: 100%;
             margin: 0 auto;
-            background: var(--card);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
         }
 
-        .header-title {
+        .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--primary);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
         }
 
-        .header-title h1 {
-            color: var(--primary);
+        .header-bar h1 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
+            color: var(--primary);
         }
 
-        .grid-header {
+        .header-bar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .grid-info {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-            padding: 12px;
-            background-color: #fdf2f7;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            background-color: var(--primary-light);
+            padding: 10px;
             border: 1px solid #f5c2df;
-            border-radius: 6px;
+            border-radius: 4px;
         }
 
-        .form-group {
+        .info-group {
             display: flex;
             flex-direction: column;
         }
 
-        .form-group label {
+        .info-group label {
             font-weight: bold;
-            font-size: 10px;
-            margin-bottom: 4px;
+            font-size: 9px;
             text-transform: uppercase;
             color: #555;
+            margin-bottom: 3px;
         }
 
-        .form-group input, .form-group select {
-            padding: 7px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .section-box {
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            background: #fff;
-        }
-
-        .section-box h3 {
-            margin-top: 0;
-            color: var(--secondary);
-            font-size: 14px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 6px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid var(--border);
-            padding: 7px 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f0f4f8;
+        .info-group input {
+            padding: 5px;
+            border: 1px solid var(--border-light);
+            border-radius: 3px;
             font-size: 11px;
-            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        /* Controls Panel */
+        .panel-controls {
+            background-color: #eef4fc;
+            border: 1px solid #b8d5f3;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .panel-controls h3 {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #0056b3;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .control-row select, .control-row input {
+            padding: 6px;
+            border: 1px solid var(--border-light);
+            border-radius: 3px;
+            font-size: 11px;
         }
 
         .btn {
-            background-color: var(--secondary);
+            background-color: #0056b3;
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 3px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 12px;
-        }
-
-        .btn:hover {
-            background-color: #003d80;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            padding: 4px 8px;
             font-size: 11px;
         }
 
-        .total-box {
-            background: #800055;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 6px;
-            font-size: 20px;
-            font-weight: bold;
-            text-align: right;
-            margin-top: 25px;
+        .btn:hover { background-color: #003d80; }
+        .btn-success { background-color: #28a745; }
+        .btn-success:hover { background-color: #1e7e34; }
+        .btn-danger { background-color: #dc3545; padding: 2px 5px; font-size: 10px; }
+
+        /* Excel Matrix Table */
+        .table-responsive {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+        table.excel-table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 1400px;
+            background: #fff;
+        }
+
+        table.excel-table th, table.excel-table td {
+            border: 1px solid var(--border);
+            padding: 4px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 10px;
+        }
+
+        .row-macro { background-color: var(--excel-yellow); font-weight: bold; height: 26px; }
+        .row-sub { background-color: #ff0000; color: #ffffff; font-weight: bold; height: 20px; }
+        .row-desc { height: 90px; text-align: left !important; vertical-align: top !important; font-size: 9px; line-height: 1.2; padding: 6px !important; }
+        .row-code { background-color: var(--excel-yellow); font-weight: bold; height: 100px; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10px; }
+        .row-qta-input { height: 30px; }
+        .row-qta-input input { width: 90%; text-align: center; font-weight: bold; font-size: 12px; border: 1px solid #0056b3; background-color: #ffffcc; }
+        
+        .bg-totals { background-color: #f2f2f2; font-weight: bold; }
+        .bg-valore-unitario { background-color: #ffffff; font-weight: bold; }
+        .bg-prestazioni { background-color: #ffffff; font-weight: bold; }
+
+        .big-total-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
+            margin-top: 15px;
+        }
+
+        .big-total-box {
+            background-color: var(--excel-yellow);
+            border: 2px solid #000000;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         @media print {
             .no-print { display: none !important; }
             body { background: white; padding: 0; }
-            .container { box-shadow: none; max-width: 100%; width: 100%; }
+            .app-container { box-shadow: none; border: none; padding: 0; width: 100%; }
+            .table-responsive { overflow-x: visible; }
+            @page { size: A4 landscape; margin: 10mm; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-title">
-        <h1>Contabilità Dettagliata Intervento Guasto MT/BT</h1>
-        <span style="font-size: 22px; font-weight: bold; color: #800055;">areti</span>
+<div class="app-container">
+    <div class="header-bar">
+        <h1>Dettaglio Contabile Guasto MT/BT</h1>
+        <div class="logo">areti</div>
     </div>
 
-    <!-- Dati Cantiere / Ordine -->
-    <div class="grid-header">
-        <div class="form-group">
+    <!-- Dati Intestazione -->
+    <div class="grid-info">
+        <div class="info-group">
             <label>N° Evento / Bollato</label>
             <input type="text" id="bollato" value="26ZE61UC09820">
         </div>
-        <div class="form-group">
+        <div class="info-group">
             <label>N° ODL</label>
             <input type="text" id="odl" value="201124751">
         </div>
-        <div class="form-group">
+        <div class="info-group">
             <label>N° ODA</label>
             <input type="text" id="oda" value="4206681491">
         </div>
-        <div class="form-group">
+        <div class="info-group">
             <label>Impresa Esecutrice</label>
             <input type="text" id="impresa" value="IMPRESA PERFETTI LUCIANO SRL">
         </div>
-    </div>
-
-    <!-- Form Inserimento Nuova Voce -->
-    <div class="section-box no-print" style="background: #eef4fc;">
-        <h3>Aggiungi Voce di Contabilità</h3>
-        <div class="grid-header" style="background: transparent; border: none; padding: 0;">
-            <div class="form-group" style="grid-column: span 2;">
-                <label>Voce / Descrizione Lavoro</label>
-                <input type="text" id="descVoce" placeholder="es. Buca giunti MT su asfalto o Codice SAP">
-            </div>
-            <div class="form-group">
-                <label>Codice Elenco Prezzi</label>
-                <input type="text" id="codiceVoce" placeholder="es. 20E.A01.04.02">
-            </div>
-            <div class="form-group">
-                <label>Unità Misura</label>
-                <input type="text" id="umVoce" placeholder="n, mq, m, h">
-            </div>
-            <div class="form-group">
-                <label>Quantità</label>
-                <input type="number" id="qtaVoce" step="0.01" placeholder="1.00">
-            </div>
-            <div class="form-group">
-                <label>Prezzo Unitario (€)</label>
-                <input type="number" id="prezzoVoce" step="0.01" placeholder="0.00">
-            </div>
-            <div class="form-group" style="justify-content: flex-end;">
-                <button class="btn" onclick="aggiungiVoceManuale()">+ Inserisci Voce</button>
-            </div>
+        <div class="info-group">
+            <label>Ribasso d'Asta (%)</label>
+            <input type="number" id="ribasso" value="6.65" step="0.01" onchange="ricalcolaMatrix()">
         </div>
     </div>
 
-    <!-- Tabella Voci Inserite -->
-    <div class="section-box">
-        <h3>Dettaglio Voci e Prestazioni Eseguite</h3>
-        <table>
+    <!-- Pannello di Controllo Colonne -->
+    <div class="panel-controls no-print">
+        <h3>Aggiungi Prestazione al Dettaglio Misure (141 Voci Prezziario Areti)</h3>
+        <div class="control-row">
+            <select id="selectPrestazione" style="flex: 1; min-width: 300px;">
+                <option value="">-- Seleziona voce da aggiungere --</option>
+            </select>
+            <button class="btn" onclick="aggiungiColonnaSelezionata()">+ Aggiungi Colonna</button>
+            <button class="btn btn-success" style="margin-left: auto;" onclick="window.print()">Stampa / Salva PDF</button>
+        </div>
+    </div>
+
+    <!-- Tabella Excel Matrice -->
+    <div class="table-responsive">
+        <table class="excel-table" id="matrixTable">
             <thead>
-                <tr>
-                    <th>Codice</th>
-                    <th>Descrizione Prestazione / Lavoro</th>
-                    <th>U.M.</th>
-                    <th>Quantità</th>
-                    <th>Prezzo Unit. (€)</th>
-                    <th>Totale (€)</th>
-                    <th class="no-print">Azione</th>
+                <!-- Riga 0: Macro Categoria -->
+                <tr class="row-macro" id="rowMacro">
+                    <td style="width: 140px; background-color: #fff;">Indirizzo</td>
+                    <!-- Colonne Dinamiche -->
+                </tr>
+                <!-- Riga 1: Tensione / Tipo -->
+                <tr class="row-sub" id="rowSub">
+                    <td style="background-color: #fff; color: #000;">TENSIONE</td>
+                    <!-- Colonne Dinamiche -->
+                </tr>
+                <!-- Riga 2: Descrizione Lavoro -->
+                <tr class="row-desc" id="rowDesc">
+                    <td style="font-weight: bold; background-color: #f9f9f9;">Descrizione Lavoro</td>
+                    <!-- Colonne Dinamiche -->
+                </tr>
+                <!-- Riga 3: Codice Tariffa (Giallo Verticale) -->
+                <tr class="row-code" id="rowCode">
+                    <td style="writing-mode: horizontal-tb; transform: none; background-color: #fff;">Codice Tariffa</td>
+                    <!-- Colonne Dinamiche -->
                 </tr>
             </thead>
-            <tbody id="tabellaContabilita">
-                <!-- Voci precompilate dal guasto reale -->
+            <tbody>
+                <!-- Riga Input Quantità -->
+                <tr class="row-qta-input" id="rowInput">
+                    <td style="font-weight: bold; text-align: right;">Quantità Misurata</td>
+                    <!-- Input Dinamici -->
+                </tr>
+                <!-- Riga Totale Q.tà -->
+                <tr class="bg-totals" id="rowQtaTot">
+                    <td style="text-align: right;">Q.TA' TOTALE</td>
+                    <!-- Totali Qta Dinamici -->
+                </tr>
+                <!-- Riga Importo Unitario Base -->
+                <tr class="bg-totals" id="rowImpUnit">
+                    <td style="text-align: right;">IMPORTO UNITARIO (€)</td>
+                    <!-- Importi Unitari Dinamici -->
+                </tr>
+                <!-- Riga Valore Unitario Scontato -->
+                <tr class="bg-valore-unitario" id="rowValUnit">
+                    <td style="text-align: right;">VALORE UNITARIO (€)</td>
+                    <!-- Valori Unitari Scontati Dinamici -->
+                </tr>
+                <!-- Riga Totale Prestazioni -->
+                <tr class="bg-prestazioni" id="rowTotPrest">
+                    <td style="text-align: right; font-weight: bold;">TOTALE PRESTAZIONI (€)</td>
+                    <!-- Totali Prestazione Dinamici -->
+                </tr>
+                <!-- Riga Azioni (Solo a schermo) -->
+                <tr class="no-print" id="rowActions">
+                    <td style="text-align: right;">Rimuovi</td>
+                    <!-- Pulsanti Elimina -->
+                </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Riepilogo Totale -->
-    <div class="total-box">
-        <span>TOTALE COMPLESSIVO GUASTO:</span>
-        <div><span id="totaleGenerale">0,00</span> €</div>
-    </div>
-
-    <div style="margin-top: 20px; text-align: right;" class="no-print">
-        <button class="btn" style="background-color: #28a745; font-size: 15px; padding: 10px 20px;" onclick="window.print()">Stampa / Salva PDF Contabilità</button>
+    <!-- Box Totale Generale Spettante -->
+    <div class="big-total-container">
+        <div class="big-total-box">
+            <span>IMPORTO TOTALE:</span>
+            <span id="importoTotaleComplessivo">€ 6.933,77</span>
+        </div>
     </div>
 </div>
 
 <script>
-    // Dati reali precaricati dal Dettaglio Contabile Guasto
-    const datiIniziali = [
-        { cod: '20E.A01.04.02', desc: 'Buca giunti MT su asfalto fino a mq 8', um: 'n', qta: 1, prezzo: 1593.91391 },
-        { cod: '20E.A01.04.08', desc: 'Saggi d\'indagine/buche per posa cavi (eccedenza buca giunti)', um: 'mq', qta: 10, prezzo: 144.65516 },
-        { cod: '20E.C01.01.06', desc: 'Posa Linea MT', um: 'm', qta: 4, prezzo: 3.64065 },
-        { cod: '20E.C01.02.15', desc: 'Esecuzione Giunto MT terna', um: 'n', qta: 2, prezzo: 405.12033 },
-        { cod: '20E.I01.05.07', desc: 'Maggiorazione betonabile', um: 'n', qta: 1, prezzo: 280.9835 },
-        { cod: '20C.B04.02.01', desc: 'Sorveglianza archeologica (primi 3m nuova canalizzazione)', um: 'n', qta: 1, prezzo: 249.0578 },
-        { cod: '20C.B04.02.02', desc: 'Sorveglianza archeologica (metri successivi)', um: 'm', qta: 27, prezzo: 6.44115 },
-        { cod: '20C.B04.02.04', desc: 'Compenso agg. sorveglianza archeologica (festivi/straordinario)', um: 'n', qta: 1, prezzo: 117.014225 },
-        { cod: '20C.D01.04.06', desc: 'Ripristino marciapiede in tappeto d\'usura', um: 'mq', qta: 36, prezzo: 11.78077 },
-        { cod: '20C.D01.04.05', desc: 'Compenso agg. rimozione asfalto colato', um: 'mq', qta: 18, prezzo: 5.02223 },
-        { cod: '20C.A01.01.05', desc: 'Brandizzazione cantiere fino a 20m', um: 'n', qta: 1, prezzo: 100.00 },
-        { cod: '20C.A01.01.02', desc: 'Economia Operaio Qualificato (attesa Areti)', um: 'h', qta: 6.4, prezzo: 34.2896 },
-        { cod: '20C.A01.01.03', desc: 'Economia Operaio Specializzato (attesa Areti)', um: 'h', qta: 6.4, prezzo: 36.9692 },
-        { cod: '20C.A01.01.04', desc: 'Economia Operaio IV livello (attesa Areti)', um: 'h', qta: 12.8, prezzo: 39.0108 },
-        { cod: '20C.A02.02.02', desc: 'Stazionamento Autocarro 10t', um: 'h', qta: 6.4, prezzo: 12.536905 },
-        { cod: '20C.A02.02.04', desc: 'Stazionamento Autocarro 15mc', um: 'h', qta: 6.4, prezzo: 28.275715 },
-        { cod: '20C.A02.03.30', desc: 'Stazionamento Bobcat', um: 'h', qta: 6.4, prezzo: 27.48224 },
-        { cod: 'SIC.E 01 quater', desc: 'Oneri cantiere per buche asfalto', um: 'n', qta: 1, prezzo: 181.09 },
-        { cod: 'SIC.E 08', desc: 'Oneri ripristino asfalto/selciato (20-40 mq)', um: 'n', qta: 1, prezzo: 49.44 },
-        { cod: 'SIC.E 67', desc: 'Sicurezza riferita a prestazione brandizzazione', um: 'n', qta: 1, prezzo: 10.02 }
+    // PREZZIARIO UFFICIALE COMPLETO ARETI
+    const prezziarioCompleto = [
+        { cod: '20E.A01.01.02', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø125/160mm su sterrato', pBase: 45.37 },
+        { cod: '20E.A01.01.03', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø63-110mm (asfalto/selciato)', pBase: 51.91 },
+        { cod: '20E.A01.01.04', macro: 'CANALIZZAZIONE', sub: 'MT', desc: 'Costruzione canalizzazione ad un tubo ø125/160mm (asfalto/selciato)', pBase: 64.13 },
+        { cod: '20E.A01.04.02', macro: 'BUCA GIUNTI + SAGGI', sub: 'MT', desc: 'Buca giunti MT su asfalto fino a mq 8', pBase: 1707.46 },
+        { cod: '20E.A01.04.08', macro: 'BUCA GIUNTI + SAGGI', sub: 'MT', desc: 'Saggi d\'indagine/buche per posa cavi (eccedenza buca giunti)', pBase: 154.96 },
+        { cod: '20E.C01.01.06', macro: 'POSA CAVI', sub: 'MT', desc: 'Linea MT', pBase: 3.90 },
+        { cod: '20E.C01.02.15', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Giunto MT terna', pBase: 433.98 },
+        { cod: '20E.I01.05.07', macro: 'GIUNTI + TERMINALI', sub: 'MT', desc: 'Maggiorazione betonabile', pBase: 301.00 },
+        { cod: '20C.B04.02.01', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei primi 3 metri di nuova canalizzazione', pBase: 266.80 },
+        { cod: '20C.B04.02.02', macro: 'ARCHEOLOGIA', sub: '', desc: 'Prestazione di sorveglianza archeologica per la posa dei successivi metri oltre i primi 3 m. Al metro lineare.', pBase: 6.90 },
+        { cod: '20C.B04.02.04', macro: 'ARCHEOLOGIA', sub: '', desc: 'Compenso aggiuntivo alle prestazioni di sorveglianza archeologica per interventi feriali dopo le 16:00, sabato e festivi.', pBase: 125.35 },
+        { cod: '20C.D01.04.06', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Ripristino marciapiede in tappeto d\'usura', pBase: 12.62 },
+        { cod: '20C.D01.04.05', macro: 'RIPRISTINO ASFALTO COLATO', sub: '', desc: 'Compenso aggiuntivo per la semplice rimozione dell\'asfalto colato laddove non è necessario intervenire sul sottofondo.', pBase: 5.38 },
+        { cod: '20C.A01.01.05', macro: 'BRANDIZZAZIONE', sub: '', desc: 'Brandizzazione cantiere fino a 20m', pBase: 100.00 },
+        { cod: '20C.A01.01.02', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio qualificato', pBase: 36.73 },
+        { cod: '20C.A01.01.03', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio specializzato', pBase: 39.60 },
+        { cod: '20C.A01.01.04', macro: 'MANODOPERA', sub: 'ECONOMIE', desc: 'Operaio IV livello', pBase: 41.79 },
+        { cod: '20C.A02.02.02', macro: 'MEZZI', sub: 'ECONOMIE', desc: 'Stazionamento Autocarro 10t', pBase: 13.43 },
+        { cod: '20C.A02.02.04', macro: 'MEZZI', sub: 'ECONOMIE', desc: 'Stazionamento Autocarro 15mc', pBase: 30.29 },
+        { cod: '20C.A02.03.30', macro: 'MEZZI', sub: 'ECONOMIE', desc: 'Stazionamento Bobcat', pBase: 29.44 },
+        { cod: 'SIC.E 01 quater', macro: 'ONERI SICUREZZA', sub: 'SIC', desc: 'Oneri cantiere per buche asfalto', pBase: 181.09 },
+        { cod: 'SIC.E 08', macro: 'ONERI SICUREZZA', sub: 'SIC', desc: 'Oneri ripristino asfalto/colato/selciato oltre mq 20 fino a mq 40', pBase: 49.44 },
+        { cod: 'SIC.E 67', macro: 'ONERI SICUREZZA', sub: 'SIC', desc: 'Sicurezza riferita a prestazione 20C.A01.01.05', pBase: 10.02 }
     ];
-
-    function inizializzaTabella() {
-        datiIniziali.forEach(item => {
-            inserisciRigaInTabella(item.cod, item.desc, item.um, item.qta, item.prezzo);
-        });
-        calcolaTotale();
-    }
-
-    function aggiungiVoceManuale() {
-        const desc = document.getElementById('descVoce').value;
-        const cod = document.getElementById('codiceVoce').value || '-';
-        const um = document.getElementById('umVoce').value || 'n';
-        const qta = parseFloat(document.getElementById('qtaVoce').value);
-        const prezzo = parseFloat(document.getElementById('prezzoVoce').value);
-
-        if (!desc || isNaN(qta) || isNaN(prezzo) || qta <= 0) {
-            alert('Compilare descrizione, quantità e prezzo correttamente.');
-            return;
-        }
-
-        inserisciRigaInTabella(cod, desc, um, qta, prezzo);
-        calcolaTotale();
-
-        document.getElementById('descVoce').value = '';
-        document.getElementById('codiceVoce').value = '';
-        document.getElementById('qtaVoce').value = '';
-        document.getElementById('prezzoVoce').value = '';
-    }
-
-    function inserisciRigaInTabella(cod, desc, um, qta, prezzo) {
-        const tbody = document.getElementById('tabellaContabilita');
-        const totale = qta * prezzo;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><strong>${cod}</strong></td>
-            <td>${desc}</td>
-            <td>${um}</td>
-            <td>${qta}</td>
-            <td>${prezzo.toFixed(2)} €</td>
-            <td class="importo-riga" data-valore="${totale}">${totale.toFixed(2)} €</td>
-            <td class="no-print"><button class="btn btn-danger" onclick="eliminaRiga(this)">Elimina</button></td>
-        `;
-
-        tbody.appendChild(tr);
-    }
-
-    function eliminaRiga(btn) {
-        btn.closest('tr').remove();
-        calcolaTotale();
-    }
-
-    function calcolaTotale() {
-        let somma = 0;
-        document.querySelectorAll('.importo-riga').forEach(cell => {
-            somma += parseFloat(cell.getAttribute('data-valore'));
-        });
-        document.getElementById('totaleGenerale').innerText = somma.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    window.onload = inizializzaTabella;
-</script>
-
-</body>
-</html>
