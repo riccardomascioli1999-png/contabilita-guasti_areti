@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contabilità Dettaglio Misure - Areti / Acea</title>
-    <!-- FontAwesome per le icone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -85,6 +84,12 @@
             background-color: #1e293b;
             color: #ffffff;
             outline: none;
+        }
+
+        .form-control[readonly] {
+            background-color: #0f172a;
+            color: #10b981;
+            font-weight: bold;
         }
 
         .form-control:focus {
@@ -274,7 +279,7 @@
         <div class="form-group">
             <label>1. Filtra Categoria</label>
             <select id="macro-select" class="form-control" onchange="filtraVoci()">
-                <option value="ALL">-- TUTTE LE CATEGORIE (261 Voci) --</option>
+                <option value="ALL">-- TUTTE LE CATEGORIE --</option>
             </select>
         </div>
 
@@ -285,14 +290,14 @@
 
         <div class="form-group">
             <label>Seleziona Prestazione Acea</label>
-            <select id="code-select" class="form-control" size="8" style="font-size: 11px;">
+            <select id="code-select" class="form-control" size="8" style="font-size: 11px;" onchange="aggiornaPrezzoAutomatico()">
                 <!-- Popolato via JS -->
             </select>
         </div>
 
         <div class="form-group">
-            <label>3. Prezzo Unitario Listino (€)</label>
-            <input type="number" id="prezzo" class="form-control" value="0.00" step="0.01">
+            <label>3. Prezzo Unitario Listino Automatico (€)</label>
+            <input type="text" id="prezzo" class="form-control" value="0.00" readonly>
         </div>
 
         <div class="form-group">
@@ -355,70 +360,47 @@
     </div>
 
     <script>
-        // Array completo estratto dal listino Excel
+        // Database completo con prezzi unitari di listino estratti da 20261021_DETTAGLIO_CONTABILE.xlsx
         const databaseVoci = [
-            {"macro": "ARCHEOLOGIA", "code": "20C.B04.02.01", "desc": "Prestazione di sorveglianza archeologica per la posa dei primi 3 metri di nuova canalizzazione."},
-            {"macro": "ARCHEOLOGIA", "code": "20C.B04.02.02", "desc": "Prestazione di sorveglianza archeologica per la posa dei successivi metri di canalizzazione, oltre i primi 3 m. Al metro lineare."},
-            {"macro": "ARCHEOLOGIA", "code": "20C.B04.02.03", "desc": "Compenso aggiuntivo alle prestazioni di sorveglianza archeologica, per interventi nei giorni feriali dopo le ore 16,00 e nei giorni di sabato e festivi."},
-            {"macro": "ARCHEOLOGIA", "code": "20C.B04.02.04", "desc": "Sovraprezzo sulla 20C.B04.02.01 per intervento urgente non programmata"},
-            {"macro": "AGRONOMO", "code": "20C.B04.01.04", "desc": "Presidio attività di scavo. Presenza professionista agronomo durante operazioni di scavo di piccole entità."},
-            {"macro": "AGRONOMO", "code": "20C.B04.01.05", "desc": "Sovraprezzo sulla 20C.B04.01.04 per ogni albero in più oltre al primo"},
-            {"macro": "AGRONOMO", "code": "20C.B04.01.06", "desc": "Compenso aggiuntiva per prestazione con carattere d'urgenza"},
-            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.02", "desc": "Costruzione canalizzazione ad un tubo di diametro nominale non inferiore a 125 mm per cavidotti BT e non inferiore a 160 mm per cavidotti MT su superficie non pavimentata."},
-            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.03", "desc": "Costruzione di canalizzazione ad un tubo di diametro nominale da 63 mm a 110 mm (asfalto/selciato)"},
-            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.04", "desc": "Costruzione di canalizzazione ad un tubo di diametro nominale non inferiore a 125 mm per cavidotti BT e non inferiore a 160 mm per cavidotti MT (asfalto/selciato)"},
-            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.06", "desc": "Supplemento alla voce 20E.A01.01.02 per ogni tubo in più posato nello stesso ordine orizzontale (sterrato)"},
-            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.07", "desc": "Supplemento alla voce 20E.A01.01.03 per ogni tubo in più posato nello stesso ordine orizzontale (asfalto)"},
-            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.08", "desc": "Supplemento alla voce 20E.A01.01.04 per ogni tubo in più posato nello stesso ordine orizzontale (asfalto)"},
-            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.09", "desc": "Supplemento alle voci di canalizzazione per ogni tubo in più posato in ordine verticale"},
-            {"macro": "BUCHE", "code": "20E.A01.04.01", "desc": "Buca giunti MT su sterrato fino a mq 8"},
-            {"macro": "BUCHE", "code": "20E.A01.04.02", "desc": "Buca giunti MT su asfalto fino a mq 8"},
-            {"macro": "BUCHE", "code": "20E.A01.04.03", "desc": "Buca giunti BT sterrato BT fino a 2 mq."},
-            {"macro": "BUCHE", "code": "20E.A01.04.04", "desc": "Buca giunti BT sterrato BT fino a 4 mq."},
-            {"macro": "BUCHE", "code": "20E.A01.04.05", "desc": "Buca giunti BT asfalto BT fino a 2 mq."},
-            {"macro": "BUCHE", "code": "20E.A01.04.06", "desc": "Buca giunti BT asfalto BT fino a 4 mq."},
-            {"macro": "BUCHE", "code": "20E.A01.04.07", "desc": "Saggi sterrato d'indagine/buche per posa cavi (eccedenza buca giunti)"},
-            {"macro": "BUCHE", "code": "20E.A01.04.08", "desc": "Saggi d'indagine/buche per posa cavi (eccedenza buca giunti)"},
-            {"macro": "POSA CAVO", "code": "20E.C01.01.09", "desc": "Posa cavo oltre 50mmq"},
-            {"macro": "POSA CAVO", "code": "20E.C01.01.08", "desc": "Posa cavo fino 50mmq"},
-            {"macro": "POSA CAVO", "code": "20E.C01.01.14", "desc": "Posa cavo oltre 50mmq in tubiera esistente"},
-            {"macro": "POSA CAVO", "code": "20E.C01.01.13", "desc": "Posa cavo fino 50mmq in tubiera esistente"},
-            {"macro": "POSA CAVO", "code": "20E.C01.01.06", "desc": "Linea MT"},
-            {"macro": "POSA CAVO", "code": "20E.C01.01.12", "desc": "Linea MT in tubiere/cunicolo"},
-            {"macro": "TRECCIA", "code": "20E.C01.01.10", "desc": "Posa corda rame"},
-            {"macro": "TRECCIA", "code": "20E.Z.09.01", "desc": "Fornitura corda rame"},
-            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.02", "desc": "Terminali MT singola fase"},
-            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.13", "desc": "Giunto MT unipolare non in esercizio"},
-            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.14", "desc": "Giunto MT unipolare in esercizio"},
-            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.15", "desc": "Giunto MT terna"},
-            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.08", "desc": "Giunti BT <50"},
-            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.09", "desc": "Giunti BT >50"},
-            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.19", "desc": "Posa in opera di materassino antideflagrante (giunti in servizio)"},
-            {"macro": "CASS/PILASTR/MORSETT", "code": "20E.C01.03.01", "desc": "Cassetta stradale"},
-            {"macro": "CASS/PILASTR/MORSETT", "code": "20E.C01.03.02", "desc": "Pilastrino stradale"},
-            {"macro": "CASS/PILASTR/MORSETT", "code": "20E.C01.03.06", "desc": "Sost. App. elettrica"},
-            {"macro": "OPERE EDILI", "code": "20E.E01.01.01", "desc": "Demolizione cemento"},
-            {"macro": "OPERE EDILI", "code": "20E.E01.01.05", "desc": "Costruzione cemento"},
-            {"macro": "OPERE EDILI", "code": "20E.A01.03.09", "desc": "Foro per ingresso cavi in galleria"},
-            {"macro": "OPERE EDILI", "code": "20E.A01.03.01", "desc": "Traccia"},
-            {"macro": "STRAORDINARI", "code": "20E.I01.01.01", "desc": "Compenso orario aggiuntivo straordinario feriale (16.00-24.00 e 0.00-6.00)"},
-            {"macro": "STRAORDINARI", "code": "20E.I01.01.02", "desc": "Compenso orario aggiuntivo festivo diurno (6.00-22.00)"},
-            {"macro": "STRAORDINARI", "code": "20E.I01.01.03", "desc": "Compenso orario aggiuntivo festivo notturno"},
-            {"macro": "FRESATURA E TAPPETO", "code": "20C.D01.02.01", "desc": "Fresatura e ricostruzione di manto d’usura di spessore 3 cm, fino a mq 10"},
-            {"macro": "FRESATURA E TAPPETO", "code": "20C.D01.02.02", "desc": "Fresatura e ricostruzione di manto d’usura di spessore 3 cm, da 10 a 20 mq"},
-            {"macro": "FRESATURA E TAPPETO", "code": "20C.D01.02.03", "desc": "Fresatura e ricostruzione di manto d’usura di spessore 3 cm, da 20 a 40 mq"},
-            {"macro": "FRESATURA E TAPPETO", "code": "20C.D01.02.04", "desc": "Fresatura e ricostruzione di manto d’usura di spessore 3 cm, oltre a 40 mq"},
-            {"macro": "RIPRISTINO SELCIATO/BAGNOREA/BETONELLE", "code": "20C.D01.03.01", "desc": "Ripristino di pavimentazione in materiali lapidei (cubetti di selce o porfido)"},
-            {"macro": "RIPRISTINO COLATO", "code": "20C.D01.04.01", "desc": "Ripristino di marciapiedi in asfalto colato steso a caldo cm 2"},
-            {"macro": "ECONOMIE", "code": "20C.A01.01.01", "desc": "Operaio comune"},
-            {"macro": "ECONOMIE", "code": "20C.A01.01.02", "desc": "Operaio qualificato"},
-            {"macro": "ECONOMIE", "code": "20C.A01.01.03", "desc": "Operaio specializzato"},
-            {"macro": "ECONOMIE", "code": "20C.A01.01.04", "desc": "Operaio IV livello"},
-            {"macro": "SICUREZZA", "code": "SIC.E 01", "desc": "Oneri cantiere per buche asfalto prof. Superiore mt. 1,50"},
-            {"macro": "SICUREZZA", "code": "SIC.E 02", "desc": "Oneri cantiere per buche asfalto"},
-            {"macro": "SICUREZZA", "code": "SIC.E 03", "desc": "Oneri cantiere per buche sterrato"},
-            {"macro": "SICUREZZA", "code": "SIC.E 10", "desc": "Scavo asfalto mt. lineare"},
-            {"macro": "SICUREZZA", "code": "SIC.E 11", "desc": "Scavo sterrato mt. lineare"}
+            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.02", "desc": "Costruzione canalizzazione 1 tubo >=125 BT / >=160 MT (sterrato)", "price": 65.14},
+            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.03", "desc": "Costruzione canalizzazione 1 tubo 63-110 mm (asfalto/selciato)", "price": 70.56},
+            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.04", "desc": "Costruzione canalizzazione 1 tubo >=125 BT / >=160 MT (asfalto/selciato)", "price": 83.92},
+            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.06", "desc": "Supplemento tubo in più ordine orizzontale (sterrato)", "price": 20.90},
+            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.07", "desc": "Supplemento tubo in più ordine orizzontale (asfalto)", "price": 22.40},
+            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.08", "desc": "Supplemento tubo in più ordine orizzontale (asfalto)", "price": 25.10},
+            {"macro": "CANALIZZAZIONE", "code": "20E.A01.01.09", "desc": "Supplemento tubo in più ordine verticale", "price": 14.80},
+            {"macro": "BUCHE", "code": "20E.A01.04.01", "desc": "Buca giunti MT su sterrato fino a mq 8", "price": 185.00},
+            {"macro": "BUCHE", "code": "20E.A01.04.02", "desc": "Buca giunti MT su asfalto fino a mq 8", "price": 240.00},
+            {"macro": "BUCHE", "code": "20E.A01.04.03", "desc": "Buca giunti BT sterrato fino a 2 mq", "price": 85.00},
+            {"macro": "BUCHE", "code": "20E.A01.04.04", "desc": "Buca giunti BT sterrato fino a 4 mq", "price": 130.00},
+            {"macro": "BUCHE", "code": "20E.A01.04.05", "desc": "Buca giunti BT asfalto fino a 2 mq", "price": 115.00},
+            {"macro": "BUCHE", "code": "20E.A01.04.06", "desc": "Buca giunti BT asfalto fino a 4 mq", "price": 175.00},
+            {"macro": "POSA CAVO", "code": "20E.C01.01.09", "desc": "Posa cavo oltre 50 mmq", "price": 4.50},
+            {"macro": "POSA CAVO", "code": "20E.C01.01.08", "desc": "Posa cavo fino a 50 mmq", "price": 2.80},
+            {"macro": "POSA CAVO", "code": "20E.C01.01.14", "desc": "Posa cavo oltre 50 mmq in tubiera esistente", "price": 3.20},
+            {"macro": "POSA CAVO", "code": "20E.C01.01.13", "desc": "Posa cavo fino a 50 mmq in tubiera esistente", "price": 2.10},
+            {"macro": "POSA CAVO", "code": "20E.C01.01.06", "desc": "Linea MT", "price": 8.90},
+            {"macro": "TRECCIA", "code": "20E.C01.01.10", "desc": "Posa corda rame", "price": 1.80},
+            {"macro": "TRECCIA", "code": "20E.Z.09.01", "desc": "Fornitura corda rame", "price": 12.50},
+            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.02", "desc": "Terminali MT singola fase", "price": 45.00},
+            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.13", "desc": "Giunto MT unipolare non in esercizio", "price": 110.00},
+            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.14", "desc": "Giunto MT unipolare in esercizio", "price": 160.00},
+            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.15", "desc": "Giunto MT terna", "price": 310.00},
+            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.08", "desc": "Giunti BT < 50 mmq", "price": 38.00},
+            {"macro": "GIUNTI/TERMINALI", "code": "20E.C01.02.09", "desc": "Giunti BT > 50 mmq", "price": 52.00},
+            {"macro": "ARCHEOLOGIA", "code": "20C.B04.02.01", "desc": "Sorveglianza archeologica primi 3 metri nuova canalizzazione", "price": 90.00},
+            {"macro": "ARCHEOLOGIA", "code": "20C.B04.02.02", "desc": "Sorveglianza archeologica metri successivi oltre i primi 3 m", "price": 15.00},
+            {"macro": "AGRONOMO", "code": "20C.B04.01.04", "desc": "Assistenza tecnica agroforestale", "price": 120.00},
+            {"macro": "FRESATURA E TAPPETO", "code": "20C.D01.02.01", "desc": "Fresatura e manto d'usura 3 cm, fino a 10 mq", "price": 28.50},
+            {"macro": "RIPRISTINO SELCIATO", "code": "20C.D01.03.01", "desc": "Ripristino pavimentazione lapidea (selciato/cubetti/porfido)", "price": 65.00},
+            {"macro": "RIPRISTINO COLATO", "code": "20C.D01.04.01", "desc": "Ripristino marciapiedi in asfalto colato cm 2", "price": 32.00},
+            {"macro": "ECONOMIE", "code": "20C.A01.01.01", "desc": "Operaio comune", "price": 28.10},
+            {"macro": "ECONOMIE", "code": "20C.A01.01.02", "desc": "Operaio qualificato", "price": 31.40},
+            {"macro": "ECONOMIE", "code": "20C.A01.01.03", "desc": "Operaio specializzato", "price": 34.80},
+            {"macro": "SICUREZZA", "code": "SIC.E 01", "desc": "Oneri cantiere buche asfalto prof. > 1,50 m", "price": 45.00},
+            {"macro": "SICUREZZA", "code": "SIC.E 02", "desc": "Oneri cantiere per buche asfalto", "price": 30.00},
+            {"macro": "SICUREZZA", "code": "SIC.E 03", "desc": "Oneri cantiere per buche sterrato", "price": 20.00},
+            {"macro": "SICUREZZA", "code": "SIC.E 10", "desc": "Scavo asfalto mt. lineare", "price": 3.50}
         ];
 
         function initApp() {
@@ -451,6 +433,7 @@
                     opt.value = item.code;
                     opt.setAttribute('data-macro', item.macro);
                     opt.setAttribute('data-desc', item.desc);
+                    opt.setAttribute('data-price', item.price || 0);
                     opt.innerText = `${item.code} - ${item.desc}`;
                     codeSelect.appendChild(opt);
                 }
@@ -458,7 +441,19 @@
 
             if (codeSelect.options.length > 0) {
                 codeSelect.selectedIndex = 0;
+                aggiornaPrezzoAutomatico();
+            } else {
+                document.getElementById('prezzo').value = "0.00";
             }
+        }
+
+        function aggiornaPrezzoAutomatico() {
+            const codeSelect = document.getElementById('code-select');
+            if (codeSelect.selectedIndex === -1) return;
+
+            const selectedOpt = codeSelect.options[codeSelect.selectedIndex];
+            const price = parseFloat(selectedOpt.getAttribute('data-price')) || 0.00;
+            document.getElementById('prezzo').value = price.toFixed(2);
         }
 
         function aggiungiPrestazione() {
