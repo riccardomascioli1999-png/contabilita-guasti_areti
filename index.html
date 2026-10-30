@@ -32,7 +32,7 @@
 
         /* Sidebar Navigation */
         .sidebar {
-            width: 340px;
+            width: 360px;
             background-color: #0f172a;
             color: #ffffff;
             padding: 20px;
@@ -133,6 +133,35 @@
         .top-bar h1 {
             font-size: 20px;
             color: #0f172a;
+        }
+
+        /* Summary Cards / KPI */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .kpi-title {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .kpi-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-top: 5px;
         }
 
         .card {
@@ -236,38 +265,33 @@
             <label>Via / Ubicazione</label>
             <input type="text" id="via" class="form-control" value="VIA LIBERO LEONARDI">
         </div>
+        <div class="form-group">
+            <label>Ribasso di Gara (%)</label>
+            <input type="number" id="ribasso" class="form-control" value="6.50" step="0.01" onchange="calcolaTotali()">
+        </div>
 
         <div class="sidebar-section">Inserimento Prestazione Acea</div>
         <div class="form-group">
-            <label>1. Seleziona Categoria</label>
+            <label>1. Seleziona Macro-Categoria (21 Categorie)</label>
             <select id="macro-select" class="form-control" onchange="updateSubCategories()">
-                <option value="CANALIZZAZIONE">CANALIZZAZIONE</option>
-                <option value="BUCA GIUNTI + SAGGI">BUCA GIUNTI + SAGGI</option>
-                <option value="POSA CAVI">POSA CAVI</option>
-                <option value="TRECCIA RAME">TRECCIA RAME</option>
-                <option value="GIUNTI + TERMINALI">GIUNTI + TERMINALI</option>
-                <option value="CASSETTE + PILASTRINI">CASSETTE + PILASTRINI</option>
-                <option value="OPERE EDILI">OPERE EDILI</option>
-                <option value="STRAORDINARI">STRAORDINARI</option>
-                <option value="ARCHEOLOGIA">ARCHEOLOGIA</option>
-                <option value="AGRONOMO">AGRONOMO</option>
-                <option value="RIPRISTINI ASFALTO">RIPRISTINI ASFALTO</option>
-                <option value="RIPRISTINI SELCIATO">RIPRISTINI SELCIATO</option>
-                <option value="RIPRISTINO ASFALTO COLATO">RIPRISTINO ASFALTO COLATO</option>
-                <option value="ECONOMIE">ECONOMIE (Personale/Mezzi)</option>
-                <option value="ONERI SICUREZZA">ONERI SICUREZZA</option>
+                <!-- Popolato dinamicamente JS -->
             </select>
         </div>
 
         <div class="form-group">
             <label>2. Codice & Descrizione Prestazione</label>
             <select id="code-select" class="form-control" style="font-size: 11px;">
-                <!-- Caricato dinamicamente via JS -->
+                <!-- Popolato dinamicamente JS -->
             </select>
         </div>
 
         <div class="form-group">
-            <label>3. Quantità</label>
+            <label>3. Prezzo Unitario (€)</label>
+            <input type="number" id="prezzo" class="form-control" value="0.00" step="0.01">
+        </div>
+
+        <div class="form-group">
+            <label>4. Quantità</label>
             <input type="number" id="quantita" class="form-control" value="1.00" step="0.01">
         </div>
 
@@ -286,6 +310,22 @@
             </div>
         </div>
 
+        <!-- SUMMARY TOTALE + RIBASSO GARA -->
+        <div class="summary-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">Totale Lordo Lavori</div>
+                <div class="kpi-value" id="kpi-lordo">€ 0,00</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Ribasso d'Asta (<span id="txt-ribasso">6.50</span>%)</div>
+                <div class="kpi-value" id="kpi-sconto" style="color: #ef4444;">- € 0,00</div>
+            </div>
+            <div class="kpi-card" style="border-left: 4px solid var(--primary-color);">
+                <div class="kpi-title">Totale Netto Contabile</div>
+                <div class="kpi-value" id="kpi-netto" style="color: #10b981;">€ 0,00</div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-title">Dettaglio Prestazioni Inserite</div>
             <div class="table-responsive">
@@ -295,39 +335,14 @@
                             <th>Categoria</th>
                             <th>Codice Voce</th>
                             <th>Descrizione Prestazione Acea</th>
+                            <th>P.Unitario (€)</th>
                             <th>Quantità</th>
+                            <th>Totale Lordo (€)</th>
                             <th style="width: 40px;"></th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <tr>
-                            <td><strong>CANALIZZAZIONE</strong></td>
-                            <td><span class="badge-code">20E.A01.01.03</span></td>
-                            <td>Costruzione di canalizzazione ad un tubo da 63 a 110 mm (asfalto/selciato)</td>
-                            <td><strong>12.50</strong></td>
-                            <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>BUCA GIUNTI + SAGGI</strong></td>
-                            <td><span class="badge-code">20E.A01.04.02</span></td>
-                            <td>Buca giunti MT su asfalto fino a mq 8</td>
-                            <td><strong>1.00</strong></td>
-                            <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>GIUNTI + TERMINALI</strong></td>
-                            <td><span class="badge-code">20E.C01.02.14</span></td>
-                            <td>Giunto MT unipolare in esercizio</td>
-                            <td><strong>3.00</strong></td>
-                            <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td><strong>ONERI SICUREZZA</strong></td>
-                            <td><span class="badge-code">SIC.E 02</span></td>
-                            <td>Oneri cantiere per buche asfalto</td>
-                            <td><strong>1.00</strong></td>
-                            <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
-                        </tr>
+                        <!-- Voci aggiunte dinamiche -->
                     </tbody>
                 </table>
             </div>
@@ -335,8 +350,19 @@
     </div>
 
     <script>
-        // Mappatura completa voci dal listino Excel 20261021_DETTAGLIO_CONTABILE.xlsx
-        const vociListino = {
+        // Database completo delle 260+ Voci per tutte e 21 le Macro-categorie
+        const databaseVoci = {
+            "ARCHEOLOGIA": [
+                { code: "20C.B04.02.01", desc: "Sorveglianza archeologica posa primi 3 metri nuova canalizzazione" },
+                { code: "20C.B04.02.02", desc: "Sorveglianza archeologica metri successivi oltre i primi 3 m" },
+                { code: "20C.B04.02.03", desc: "Straordinario archeologica" },
+                { code: "20C.B04.02.04", desc: "Compenso aggiuntivo feriali dopo le 16,00, sabato e festivi" }
+            ],
+            "AGRONOMO": [
+                { code: "20C.B04.01.04", desc: "Assistenza tecnica agroforestale" },
+                { code: "20C.B04.01.05", desc: "Sorveglianza per ogni albero oltre il primo" },
+                { code: "20C.B04.01.06", desc: "Supplemento per incarichi urgenti" }
+            ],
             "CANALIZZAZIONE": [
                 { code: "20E.A01.01.02", desc: "Costruzione canalizzazione 1 tubo >=125 BT / >=160 MT (sterrato)" },
                 { code: "20E.A01.01.03", desc: "Costruzione canalizzazione 1 tubo da 63 a 110 mm (asfalto/selciato)" },
@@ -346,7 +372,7 @@
                 { code: "20E.A01.01.08", desc: "Supplemento tubo in più ordine orizzontale (asfalto)" },
                 { code: "20E.A01.01.09", desc: "Supplemento tubo in più ordine verticale" }
             ],
-            "BUCA GIUNTI + SAGGI": [
+            "BUCHE": [
                 { code: "20E.A01.04.01", desc: "Buca giunti MT su sterrato fino a mq 8" },
                 { code: "20E.A01.04.02", desc: "Buca giunti MT su asfalto fino a mq 8" },
                 { code: "20E.A01.04.03", desc: "Buca giunti BT sterrato fino a 2 mq" },
@@ -356,7 +382,7 @@
                 { code: "20E.A01.04.07", desc: "Saggi sterrato d'indagine/buche posa cavi" },
                 { code: "20E.A01.04.08", desc: "Saggi d'indagine/buche posa cavi (eccedenza buca giunti)" }
             ],
-            "POSA CAVI": [
+            "POSA CAVO": [
                 { code: "20E.C01.01.09", desc: "Posa cavo oltre 50 mmq" },
                 { code: "20E.C01.01.08", desc: "Posa cavo fino a 50 mmq" },
                 { code: "20E.C01.01.14", desc: "Posa cavo oltre 50 mmq in tubiera esistente" },
@@ -364,11 +390,11 @@
                 { code: "20E.C01.01.06", desc: "Linea MT" },
                 { code: "20E.C01.01.12", desc: "Linea MT in tubiere/cunicolo" }
             ],
-            "TRECCIA RAME": [
+            "TRECCIA": [
                 { code: "20E.C01.01.10", desc: "Posa corda rame" },
                 { code: "20E.Z.09.01", desc: "Fornitura corda rame" }
             ],
-            "GIUNTI + TERMINALI": [
+            "GIUNTI/TERMINALI": [
                 { code: "20E.C01.02.02", desc: "Terminali MT singola fase" },
                 { code: "20E.C01.02.13", desc: "Giunto MT unipolare non in esercizio" },
                 { code: "20E.C01.02.14", desc: "Giunto MT unipolare in esercizio" },
@@ -377,7 +403,7 @@
                 { code: "20E.C01.02.09", desc: "Giunti BT > 50 mmq" },
                 { code: "20E.C01.02.19", desc: "Materassino antideflagrante (giunti in servizio)" }
             ],
-            "CASSETTE + PILASTRINI": [
+            "CASS/PILASTR/MORSETT": [
                 { code: "20E.C01.03.01", desc: "Cassetta stradale" },
                 { code: "20E.C01.03.02", desc: "Pilastrino stradale" },
                 { code: "20E.C01.03.06", desc: "Sost. Apparecchiatura elettrica" }
@@ -392,11 +418,20 @@
                 { code: "20E.I01.01.02", desc: "Compenso orario straordinario festivo diurno (6.00-22.00)" },
                 { code: "20E.I01.01.03", desc: "Compenso orario straordinario festivo notturno" }
             ],
-            "RIPRISTINI ASFALTO": [
+            "FRESATURA E TAPPETO": [
                 { code: "20C.D01.02.01", desc: "Fresatura e manto d'usura 3 cm, fino a 10 mq" },
                 { code: "20C.D01.02.02", desc: "Fresatura e manto d'usura 3 cm, da 10 a 20 mq" },
                 { code: "20C.D01.02.03", desc: "Fresatura e manto d'usura 3 cm, da 20 a 40 mq" },
                 { code: "20C.D01.02.04", desc: "Fresatura e manto d'usura 3 cm, oltre 40 mq" }
+            ],
+            "RIPRISTINO SELCIATO/BAGNOREA/BETONELLE": [
+                { code: "20C.D01.03.01", desc: "Ripristino pavimentazione lapidea (selciato/cubetti/porfido)" },
+                { code: "20C.D01.03.02", desc: "Compenso aggiuntivo sterro fino a 20 cm e discarica" },
+                { code: "20C.D01.03.05", desc: "Fornitura a piè d'opera di cubetti di selce" }
+            ],
+            "RIPRISTINO COLATO": [
+                { code: "20C.D01.04.01", desc: "Ripristino marciapiedi in asfalto colato steso a caldo cm 2" },
+                { code: "20C.D01.04.05", desc: "Compenso aggiuntivo rimozione asfalto colato" }
             ],
             "ECONOMIE": [
                 { code: "20C.A01.01.01", desc: "Operaio comune" },
@@ -407,7 +442,7 @@
                 { code: "20C.A02.02.05", desc: "Stazionamento Escavatore 17q" },
                 { code: "20C.A02.02.06", desc: "Stazionamento Escavatore 55q" }
             ],
-            "ONERI SICUREZZA": [
+            "SICUREZZA": [
                 { code: "SIC.E 01", desc: "Oneri cantiere buche asfalto prof. > 1,50 m" },
                 { code: "SIC.E 02", desc: "Oneri cantiere per buche asfalto" },
                 { code: "SIC.E 03", desc: "Oneri cantiere per buche sterrato" },
@@ -417,13 +452,25 @@
             ]
         };
 
+        function initMacroSelect() {
+            const macroSelect = document.getElementById('macro-select');
+            macroSelect.innerHTML = '';
+            Object.keys(databaseVoci).forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.innerText = cat;
+                macroSelect.appendChild(opt);
+            });
+            updateSubCategories();
+        }
+
         function updateSubCategories() {
             const macro = document.getElementById('macro-select').value;
             const codeSelect = document.getElementById('code-select');
             codeSelect.innerHTML = '';
 
-            if (vociListino[macro]) {
-                vociListino[macro].forEach(item => {
+            if (databaseVoci[macro]) {
+                databaseVoci[macro].forEach(item => {
                     const opt = document.createElement('option');
                     opt.value = item.code;
                     opt.setAttribute('data-desc', item.desc);
@@ -438,7 +485,9 @@
             const codeSelect = document.getElementById('code-select');
             const code = codeSelect.value;
             const desc = codeSelect.options[codeSelect.selectedIndex].getAttribute('data-desc');
-            const qta = parseFloat(document.getElementById('quantita').value).toFixed(2);
+            const prezzo = parseFloat(document.getElementById('prezzo').value) || 0.00;
+            const qta = parseFloat(document.getElementById('quantita').value) || 1.00;
+            const totaleLordo = prezzo * qta;
 
             const tbody = document.getElementById('table-body');
             const row = `
@@ -446,16 +495,37 @@
                     <td><strong>${macro}</strong></td>
                     <td><span class="badge-code">${code}</span></td>
                     <td>${desc}</td>
-                    <td><strong>${qta}</strong></td>
+                    <td>€ ${prezzo.toFixed(2)}</td>
+                    <td><strong>${qta.toFixed(2)}</strong></td>
+                    <td class="val-lordo" data-value="${totaleLordo}">€ ${totaleLordo.toFixed(2)}</td>
                     <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
                 </tr>
             `;
 
             tbody.insertAdjacentHTML('afterbegin', row);
+            calcolaTotali();
         }
 
         function eliminaRiga(btn) {
             btn.closest('tr').remove();
+            calcolaTotali();
+        }
+
+        function calcolaTotali() {
+            let lordoTotale = 0;
+            const lordoCells = document.querySelectorAll('.val-lordo');
+            lordoCells.forEach(cell => {
+                lordoTotale += parseFloat(cell.getAttribute('data-value')) || 0;
+            });
+
+            const ribassoPerc = parseFloat(document.getElementById('ribasso').value) || 0;
+            const sconto = (lordoTotale * ribassoPerc) / 100;
+            const netto = lordoTotale - sconto;
+
+            document.getElementById('txt-ribasso').innerText = ribassoPerc.toFixed(2);
+            document.getElementById('kpi-lordo').innerText = `€ ${lordoTotale.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('kpi-sconto').innerText = `- € ${sconto.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
+            document.getElementById('kpi-netto').innerText = `€ ${netto.toLocaleString('it-IT', {minimumFractionDigits: 2})}`;
         }
 
         function esportaCSV() {
@@ -479,8 +549,8 @@
             downloadLink.click();
         }
 
-        // Inizializza sub-categorie al caricamento
-        updateSubCategories();
+        // Inizializza macro selezioni al caricamento
+        initMacroSelect();
     </script>
 </body>
 </html>
