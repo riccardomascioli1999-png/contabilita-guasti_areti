@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contabilità Dettaglio Misure - Areti / Acea</title>
-    <!-- FontAwesome per le icone e html2pdf per scaricare la scheda in PDF -->
+    <!-- FontAwesome per le icone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary-color: #e6007e;
-            --primary-dark: #c4006b;
+            --primary-dark: #b80064;
             --bg-body: #f1f5f9;
             --card-bg: #ffffff;
-            --text-color: #1e293b;
+            --text-dark: #0f172a;
             --border-color: #cbd5e1;
         }
 
@@ -26,21 +25,22 @@
 
         body {
             background-color: var(--bg-body);
-            color: var(--text-color);
+            color: var(--text-dark);
             display: flex;
             min-height: 100vh;
         }
 
         /* Sidebar Navigation */
         .sidebar {
-            width: 280px;
+            width: 340px;
             background-color: #0f172a;
             color: #ffffff;
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            overflow-y: auto;
         }
 
         .brand-title {
@@ -50,63 +50,50 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
         }
 
-        .nav-menu {
-            list-style: none;
+        .sidebar-section {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+
+        .form-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
+            margin-bottom: 10px;
         }
 
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            color: #94a3b8;
-            text-decoration: none;
+        .form-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #334155;
             border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background-color: var(--primary-color);
+            font-size: 12px;
+            background-color: #1e293b;
             color: #ffffff;
+            outline: none;
         }
 
-        /* Main Content */
-        .main-content {
-            flex-grow: 1;
-            padding: 25px;
-            overflow-y: auto;
-        }
-
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            background: #ffffff;
-            padding: 15px 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .header-title h1 {
-            font-size: 20px;
-            color: #0f172a;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(230, 0, 126, 0.25);
         }
 
         .btn {
-            padding: 10px 16px;
+            padding: 10px 14px;
             font-size: 13px;
             font-weight: bold;
             color: #ffffff;
@@ -116,19 +103,36 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             transition: background 0.2s;
         }
 
         .btn:hover { background-color: var(--primary-dark); }
-        .btn-success { background-color: #10b981; }
-        .btn-success:hover { background-color: #059669; }
+        .btn-excel { background-color: #10b981; }
+        .btn-excel:hover { background-color: #059669; }
 
-        /* Grid Layout */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 20px;
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            color: #0f172a;
         }
 
         .card {
@@ -143,37 +147,11 @@
         .card-title {
             font-size: 15px;
             font-weight: bold;
-            margin-bottom: 15px;
             color: #0f172a;
+            margin-bottom: 15px;
             border-bottom: 2px solid var(--primary-color);
             padding-bottom: 5px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #475569;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-            outline: none;
-            background-color: #fff;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(230, 0, 126, 0.15);
+            display: inline-block;
         }
 
         /* Table Styling */
@@ -196,10 +174,19 @@
         th {
             background-color: #f8fafc;
             color: #475569;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         tr:hover { background-color: #f1f5f9; }
+
+        .badge-code {
+            background-color: #e2e8f0;
+            color: #0f172a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-family: monospace;
+        }
 
         .btn-delete {
             color: #ef4444;
@@ -211,165 +198,149 @@
 
         .btn-delete:hover { color: #dc2626; }
 
+        @media print {
+            .sidebar, .btn, .btn-delete { display: none !important; }
+            body { background: white; }
+            .main-content { padding: 0; }
+            .card { border: none; box-shadow: none; }
+        }
+
         @media (max-width: 900px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; }
-            .content-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- MENU LATERALE -->
+    <!-- MENU LATERALE DI COMPILAZIONE -->
     <div class="sidebar">
         <div class="brand-title">
-            <i class="fa-solid fa-bolt"></i> Areti Contabilità
+            <i class="fa-solid fa-bolt"></i> Contabilità Areti
         </div>
-        <ul class="nav-menu">
-            <li><a href="#" class="nav-link active"><i class="fa-solid fa-list-check"></i> Dettaglio Misure</a></li>
-            <li><a href="#" class="nav-link"><i class="fa-solid fa-screwdriver-wrench"></i> Scheda Giunti MT</a></li>
-            <li><a href="#" class="nav-link"><i class="fa-solid fa-calculator"></i> Totale BT / MT</a></li>
-            <li><a href="#" class="nav-link"><i class="fa-solid fa-clock"></i> Economie Orarie</a></li>
-        </ul>
+
+        <div class="sidebar-section">Intestazione Cantiere</div>
+        <div class="form-group">
+            <label>N° Contratto</label>
+            <input type="text" id="contratto" class="form-control" value="36/2104">
+        </div>
+        <div class="form-group">
+            <label>Impresa Esecutrice</label>
+            <input type="text" id="impresa" class="form-control" value="IMPRESA PERFETTI LUCIANO SRL">
+        </div>
+        <div class="form-group">
+            <label>Evento / Preventivo N° (Bollato)</label>
+            <input type="text" id="bollato" class="form-control" value="26ZE61UC09366">
+        </div>
+        <div class="form-group">
+            <label>Via / Ubicazione</label>
+            <input type="text" id="via" class="form-control" value="VIA LIBERO LEONARDI">
+        </div>
+
+        <div class="sidebar-section">Inserimento Prestazione Acea</div>
+        <div class="form-group">
+            <label>1. Seleziona Categoria</label>
+            <select id="macro-select" class="form-control" onchange="updateSubCategories()">
+                <option value="CANALIZZAZIONE">CANALIZZAZIONE</option>
+                <option value="BUCA GIUNTI + SAGGI">BUCA GIUNTI + SAGGI</option>
+                <option value="POSA CAVI">POSA CAVI</option>
+                <option value="TRECCIA RAME">TRECCIA RAME</option>
+                <option value="GIUNTI + TERMINALI">GIUNTI + TERMINALI</option>
+                <option value="CASSETTE + PILASTRINI">CASSETTE + PILASTRINI</option>
+                <option value="OPERE EDILI">OPERE EDILI</option>
+                <option value="STRAORDINARI">STRAORDINARI</option>
+                <option value="ARCHEOLOGIA">ARCHEOLOGIA</option>
+                <option value="AGRONOMO">AGRONOMO</option>
+                <option value="RIPRISTINI ASFALTO">RIPRISTINI ASFALTO</option>
+                <option value="RIPRISTINI SELCIATO">RIPRISTINI SELCIATO</option>
+                <option value="RIPRISTINO ASFALTO COLATO">RIPRISTINO ASFALTO COLATO</option>
+                <option value="ECONOMIE">ECONOMIE (Personale/Mezzi)</option>
+                <option value="ONERI SICUREZZA">ONERI SICUREZZA</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>2. Codice & Descrizione Prestazione</label>
+            <select id="code-select" class="form-control" style="font-size: 11px;">
+                <!-- Caricato dinamicamente via JS -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>3. Quantità</label>
+            <input type="number" id="quantita" class="form-control" value="1.00" step="0.01">
+        </div>
+
+        <button class="btn" onclick="aggiungiPrestazione()" style="width: 100%; margin-top: 10px;">
+            <i class="fa-solid fa-plus"></i> Inserisci in Contabilità
+        </button>
     </div>
 
-    <!-- CONTENUTO PRINCIPALE -->
+    <!-- AREA CENTRALE REGISTRO -->
     <div class="main-content">
-        
-        <div class="header-bar">
-            <div class="header-title">
-                <h1>Registro Contabile Misure e Prestazioni</h1>
-            </div>
-            <div class="btn-group">
-                <button class="btn btn-success" onclick="exportCSV()"><i class="fa-solid fa-file-excel"></i> Esporta Excel / CSV</button>
+        <div class="top-bar">
+            <h1>Registro Contabile Misure e Prestazioni</h1>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-excel" onclick="esportaCSV()"><i class="fa-solid fa-file-excel"></i> Esporta Excel / CSV</button>
                 <button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Stampa Scheda</button>
             </div>
         </div>
 
-        <div class="content-grid">
-            
-            <!-- FORM DI INSERIMENTO -->
-            <div>
-                <div class="card">
-                    <div class="card-title">Intestazione Cantiere / Intervento</div>
-                    <div class="form-group">
-                        <label>Impresa Esecutrice</label>
-                        <input type="text" id="impresa" class="form-control" value="IMPRESA PERFETTI LUCIANO SRL">
-                    </div>
-                    <div class="form-group">
-                        <label>N° Contratto</label>
-                        <input type="text" id="contratto" class="form-control" value="36/2104">
-                    </div>
-                    <div class="form-group">
-                        <label>Evento / Preventivo N° (Bollato)</label>
-                        <input type="text" id="bollato" class="form-control" value="26ZE61UC09366">
-                    </div>
-                    <div class="form-group">
-                        <label>Ubicazione / Via</label>
-                        <input type="text" id="via" class="form-control" value="VIA LIBERO LEONARDI">
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">Aggiungi Voce di Listino</div>
-                    <form id="entry-form" onsubmit="addAccountingRow(event)">
-                        <div class="form-group">
-                            <label>Macro Categoria</label>
-                            <select id="macro-category" class="form-control" onchange="updateSubCategories()">
-                                <option value="CANALIZZAZIONE">CANALIZZAZIONE</option>
-                                <option value="BUCA GIUNTI + SAGGI">BUCA GIUNTI + SAGGI</option>
-                                <option value="POSA CAVI">POSA CAVI</option>
-                                <option value="TRECCIA RAME">TRECCIA RAME</option>
-                                <option value="GIUNTI + TERMINALI">GIUNTI + TERMINALI</option>
-                                <option value="CASSETTE + PILASTRINI">CASSETTE + PILASTRINI</option>
-                                <option value="OPERE EDILI">OPERE EDILI</option>
-                                <option value="STRAORDINARI">STRAORDINARI</option>
-                                <option value="ARCHEOLOGIA">ARCHEOLOGIA</option>
-                                <option value="AGRONOMO">AGRONOMO</option>
-                                <option value="RIPRISTINI ASFALTO">RIPRISTINI ASFALTO</option>
-                                <option value="RIPRISTINI SELCIATO">RIPRISTINI SELCIATO</option>
-                                <option value="RIPRISTINO ASFALTO COLATO">RIPRISTINO ASFALTO COLATO</option>
-                                <option value="ECONOMIE">ECONOMIE (Personale/Mezzi)</option>
-                                <option value="ONERI SICUREZZA">ONERI SICUREZZA</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Codice Voce & Descrizione</label>
-                            <select id="code-item" class="form-control">
-                                <!-- Opzioni caricate via JS -->
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Quantità / Unità di Misura</label>
-                            <input type="number" step="0.01" id="quantity" class="form-control" value="1.00" required>
-                        </div>
-
-                        <button type="submit" class="btn" style="width: 100%; justify-content: center;"><i class="fa-solid fa-plus"></i> Inserisci Voce in Contabilità</button>
-                    </form>
-                </div>
+        <div class="card">
+            <div class="card-title">Dettaglio Prestazioni Inserite</div>
+            <div class="table-responsive">
+                <table id="accounting-table">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Codice Voce</th>
+                            <th>Descrizione Prestazione Acea</th>
+                            <th>Quantità</th>
+                            <th style="width: 40px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <tr>
+                            <td><strong>CANALIZZAZIONE</strong></td>
+                            <td><span class="badge-code">20E.A01.01.03</span></td>
+                            <td>Costruzione di canalizzazione ad un tubo da 63 a 110 mm (asfalto/selciato)</td>
+                            <td><strong>12.50</strong></td>
+                            <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>BUCA GIUNTI + SAGGI</strong></td>
+                            <td><span class="badge-code">20E.A01.04.02</span></td>
+                            <td>Buca giunti MT su asfalto fino a mq 8</td>
+                            <td><strong>1.00</strong></td>
+                            <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>GIUNTI + TERMINALI</strong></td>
+                            <td><span class="badge-code">20E.C01.02.14</span></td>
+                            <td>Giunto MT unipolare in esercizio</td>
+                            <td><strong>3.00</strong></td>
+                            <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>ONERI SICUREZZA</strong></td>
+                            <td><span class="badge-code">SIC.E 02</span></td>
+                            <td>Oneri cantiere per buche asfalto</td>
+                            <td><strong>1.00</strong></td>
+                            <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- REGISTRO DELLE VOCI INSERITE -->
-            <div class="card">
-                <div class="card-title">Dettaglio Misure Registrate</div>
-                <div class="table-responsive">
-                    <table id="accounting-table">
-                        <thead>
-                            <tr>
-                                <th>Categoria</th>
-                                <th>Codice Voce</th>
-                                <th>Descrizione Prestazione</th>
-                                <th>Q.tà</th>
-                                <th style="width: 40px;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body">
-                            <tr>
-                                <td><strong>CANALIZZAZIONE</strong></td>
-                                <td>20E.A01.01.03</td>
-                                <td>Costruzione di canalizzazione ad un tubo da 63 a 110 mm (asfalto/selciato)</td>
-                                <td><strong>12.50 mt</strong></td>
-                                <td><button class="btn-delete" onclick="removeRow(this)"><i class="fa-solid fa-trash"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td><strong>BUCA GIUNTI + SAGGI</strong></td>
-                                <td>20E.A01.04.02</td>
-                                <td>Buca giunti MT su asfalto fino a mq 8</td>
-                                <td><strong>1.00 n</strong></td>
-                                <td><button class="btn-delete" onclick="removeRow(this)"><i class="fa-solid fa-trash"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td><strong>GIUNTI + TERMINALI</strong></td>
-                                <td>20E.C01.02.14</td>
-                                <td>Giunto MT unipolare in esercizio</td>
-                                <td><strong>3.00 n</strong></td>
-                                <td><button class="btn-delete" onclick="removeRow(this)"><i class="fa-solid fa-trash"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td><strong>ONERI SICUREZZA</strong></td>
-                                <td>SIC.E 02</td>
-                                <td>Oneri cantiere per buche asfalto</td>
-                                <td><strong>1.00 n</strong></td>
-                                <td><button class="btn-delete" onclick="removeRow(this)"><i class="fa-solid fa-trash"></i></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
-
     </div>
 
     <script>
-        // Mappatura completa voci di listino Excel
-        const priceList = {
+        // Mappatura completa voci dal listino Excel 20261021_DETTAGLIO_CONTABILE.xlsx
+        const vociListino = {
             "CANALIZZAZIONE": [
-                { code: "20E.A01.01.02", desc: "Costruzione canalizzazione tubo >=125mm BT / >=160mm MT (sterrato)" },
-                { code: "20E.A01.01.03", desc: "Costruzione canalizzazione tubo da 63 a 110mm (asfalto/selciato)" },
-                { code: "20E.A01.01.04", desc: "Costruzione canalizzazione tubo >=125mm BT / >=160mm MT (asfalto/selciato)" },
+                { code: "20E.A01.01.02", desc: "Costruzione canalizzazione 1 tubo >=125 BT / >=160 MT (sterrato)" },
+                { code: "20E.A01.01.03", desc: "Costruzione canalizzazione 1 tubo da 63 a 110 mm (asfalto/selciato)" },
+                { code: "20E.A01.01.04", desc: "Costruzione canalizzazione 1 tubo >=125 BT / >=160 MT (asfalto/selciato)" },
                 { code: "20E.A01.01.06", desc: "Supplemento tubo in più ordine orizzontale (sterrato)" },
                 { code: "20E.A01.01.07", desc: "Supplemento tubo in più ordine orizzontale (asfalto)" },
                 { code: "20E.A01.01.08", desc: "Supplemento tubo in più ordine orizzontale (asfalto)" },
@@ -386,20 +357,46 @@
                 { code: "20E.A01.04.08", desc: "Saggi d'indagine/buche posa cavi (eccedenza buca giunti)" }
             ],
             "POSA CAVI": [
-                { code: "20E.C01.01.09", desc: "Posa cavo oltre 50mmq" },
-                { code: "20E.C01.01.08", desc: "Posa cavo fino 50mmq" },
-                { code: "20E.C01.01.14", desc: "Posa cavo oltre 50mmq in tubiera esistente" },
-                { code: "20E.C01.01.13", desc: "Posa cavo fino 50mmq in tubiera esistente" },
+                { code: "20E.C01.01.09", desc: "Posa cavo oltre 50 mmq" },
+                { code: "20E.C01.01.08", desc: "Posa cavo fino a 50 mmq" },
+                { code: "20E.C01.01.14", desc: "Posa cavo oltre 50 mmq in tubiera esistente" },
+                { code: "20E.C01.01.13", desc: "Posa cavo fino a 50 mmq in tubiera esistente" },
                 { code: "20E.C01.01.06", desc: "Linea MT" },
                 { code: "20E.C01.01.12", desc: "Linea MT in tubiere/cunicolo" }
+            ],
+            "TRECCIA RAME": [
+                { code: "20E.C01.01.10", desc: "Posa corda rame" },
+                { code: "20E.Z.09.01", desc: "Fornitura corda rame" }
             ],
             "GIUNTI + TERMINALI": [
                 { code: "20E.C01.02.02", desc: "Terminali MT singola fase" },
                 { code: "20E.C01.02.13", desc: "Giunto MT unipolare non in esercizio" },
                 { code: "20E.C01.02.14", desc: "Giunto MT unipolare in esercizio" },
                 { code: "20E.C01.02.15", desc: "Giunto MT terna" },
-                { code: "20E.C01.02.08", desc: "Giunti BT <50" },
-                { code: "20E.C01.02.09", desc: "Giunti BT >50" }
+                { code: "20E.C01.02.08", desc: "Giunti BT < 50 mmq" },
+                { code: "20E.C01.02.09", desc: "Giunti BT > 50 mmq" },
+                { code: "20E.C01.02.19", desc: "Materassino antideflagrante (giunti in servizio)" }
+            ],
+            "CASSETTE + PILASTRINI": [
+                { code: "20E.C01.03.01", desc: "Cassetta stradale" },
+                { code: "20E.C01.03.02", desc: "Pilastrino stradale" },
+                { code: "20E.C01.03.06", desc: "Sost. Apparecchiatura elettrica" }
+            ],
+            "OPERE EDILI": [
+                { code: "20E.E01.01.01", desc: "Demolizione cemento" },
+                { code: "20E.E01.01.05", desc: "Costruzione cemento" },
+                { code: "20E.A01.03.09", desc: "Foro per ingresso cavi in galleria" }
+            ],
+            "STRAORDINARI": [
+                { code: "20E.I01.01.01", desc: "Compenso orario straordinario feriale (16.00-24.00 / 0.00-6.00)" },
+                { code: "20E.I01.01.02", desc: "Compenso orario straordinario festivo diurno (6.00-22.00)" },
+                { code: "20E.I01.01.03", desc: "Compenso orario straordinario festivo notturno" }
+            ],
+            "RIPRISTINI ASFALTO": [
+                { code: "20C.D01.02.01", desc: "Fresatura e manto d'usura 3 cm, fino a 10 mq" },
+                { code: "20C.D01.02.02", desc: "Fresatura e manto d'usura 3 cm, da 10 a 20 mq" },
+                { code: "20C.D01.02.03", desc: "Fresatura e manto d'usura 3 cm, da 20 a 40 mq" },
+                { code: "20C.D01.02.04", desc: "Fresatura e manto d'usura 3 cm, oltre 40 mq" }
             ],
             "ECONOMIE": [
                 { code: "20C.A01.01.01", desc: "Operaio comune" },
@@ -407,70 +404,61 @@
                 { code: "20C.A01.01.03", desc: "Operaio specializzato" },
                 { code: "20C.A01.01.04", desc: "Operaio IV livello" },
                 { code: "20C.A02.02.01", desc: "Autocarro 10t" },
-                { code: "20C.A02.02.02", desc: "Stazionamento Autocarro 10t" },
                 { code: "20C.A02.02.05", desc: "Stazionamento Escavatore 17q" },
                 { code: "20C.A02.02.06", desc: "Stazionamento Escavatore 55q" }
             ],
             "ONERI SICUREZZA": [
-                { code: "SIC.E 01", desc: "Oneri cantiere buche asfalto prof. >1.50m" },
+                { code: "SIC.E 01", desc: "Oneri cantiere buche asfalto prof. > 1,50 m" },
                 { code: "SIC.E 02", desc: "Oneri cantiere per buche asfalto" },
                 { code: "SIC.E 03", desc: "Oneri cantiere per buche sterrato" },
                 { code: "SIC.E 10", desc: "Scavo asfalto mt. lineare" },
                 { code: "SIC.E 11", desc: "Scavo sterrato mt. lineare" },
-                { code: "SIC.E 12", desc: "Intervento su apparecchiature elettriche (pilastrini ecc..)" }
+                { code: "SIC.E 12", desc: "Intervento su apparecchiature elettriche" }
             ]
         };
 
         function updateSubCategories() {
-            const macroSelect = document.getElementById('macro-category');
-            const codeSelect = document.getElementById('code-item');
-            const selectedMacro = macroSelect.value;
-
+            const macro = document.getElementById('macro-select').value;
+            const codeSelect = document.getElementById('code-select');
             codeSelect.innerHTML = '';
-            
-            if (priceList[selectedMacro]) {
-                priceList[selectedMacro].forEach(item => {
+
+            if (vociListino[macro]) {
+                vociListino[macro].forEach(item => {
                     const opt = document.createElement('option');
                     opt.value = item.code;
                     opt.setAttribute('data-desc', item.desc);
                     opt.innerText = `${item.code} - ${item.desc}`;
                     codeSelect.appendChild(opt);
                 });
-            } else {
-                const opt = document.createElement('option');
-                opt.value = "GENERICO";
-                opt.innerText = "Voce Generica";
-                codeSelect.appendChild(opt);
             }
         }
 
-        function addAccountingRow(e) {
-            e.preventDefault();
-            const macro = document.getElementById('macro-category').value;
-            const codeSelect = document.getElementById('code-item');
+        function aggiungiPrestazione() {
+            const macro = document.getElementById('macro-select').value;
+            const codeSelect = document.getElementById('code-select');
             const code = codeSelect.value;
-            const desc = codeSelect.options[codeSelect.selectedIndex].getAttribute('data-desc') || "Voce Cantiere";
-            const qty = parseFloat(document.getElementById('quantity').value).toFixed(2);
+            const desc = codeSelect.options[codeSelect.selectedIndex].getAttribute('data-desc');
+            const qta = parseFloat(document.getElementById('quantita').value).toFixed(2);
 
             const tbody = document.getElementById('table-body');
             const row = `
                 <tr>
                     <td><strong>${macro}</strong></td>
-                    <td>${code}</td>
+                    <td><span class="badge-code">${code}</span></td>
                     <td>${desc}</td>
-                    <td><strong>${qty}</strong></td>
-                    <td><button class="btn-delete" onclick="removeRow(this)"><i class="fa-solid fa-trash"></i></button></td>
+                    <td><strong>${qta}</strong></td>
+                    <td><button class="btn-delete" onclick="eliminaRiga(this)"><i class="fa-solid fa-trash"></i></button></td>
                 </tr>
             `;
 
             tbody.insertAdjacentHTML('afterbegin', row);
         }
 
-        function removeRow(btn) {
+        function eliminaRiga(btn) {
             btn.closest('tr').remove();
         }
 
-        function exportCSV() {
+        function esportaCSV() {
             let csv = [];
             const rows = document.querySelectorAll("#accounting-table tr");
             
@@ -484,14 +472,14 @@
 
             const csvFile = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
             const downloadLink = document.createElement("a");
-            downloadLink.download = "Dettaglio_Misure_Areti.csv";
+            downloadLink.download = "Contabilita_Prestazioni_Acea.csv";
             downloadLink.href = window.URL.createObjectURL(csvFile);
             downloadLink.style.display = "none";
             document.body.appendChild(downloadLink);
             downloadLink.click();
         }
 
-        // Inizializza subcategorie al caricamento
+        // Inizializza sub-categorie al caricamento
         updateSubCategories();
     </script>
 </body>
