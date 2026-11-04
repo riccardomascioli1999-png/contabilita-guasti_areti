@@ -3,132 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contabilità Guasti MT/BT</title>
+    <title>Contabilità Guasti MT - Impresa Perfetti Luciano</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        function calcolaRapportino() {
-            const formData = new FormData(document.getElementById('form-contabilita'));
-            let riepilogo = '<h3 class="font-bold text-lg mb-2">Riepilogo Inserimenti:</h3><ul class="list-disc pl-5">';
-            
-            for (let [key, value] of formData.entries()) {
-                if (value && value > 0) {
-                    // Sostituisce gli underscore con spazi per la formattazione
-                    let label = key.replace(/_/g, ' ');
-                    riepilogo += `<li><strong>${label}:</strong> ${value}</li>`;
-                }
-            }
-            riepilogo += '</ul>';
-            
-            document.getElementById('risultato').innerHTML = riepilogo;
-            document.getElementById('risultato').classList.remove('hidden');
-        }
-    </script>
 </head>
-<body class="bg-slate-100 p-8 font-sans text-slate-800">
-
-    <div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md border-t-4 border-blue-600">
-        <h1 class="text-2xl font-bold text-blue-900 mb-2">Inserimento Misure - Lavori di Guasto MT/BT</h1>
-        <p class="text-sm text-slate-500 mb-6">Compila i campi per generare il riepilogo delle voci contabili. In attesa delle tue regole di calcolo, i campi accettano quantità o metri lineari.</p>
-
-        <form id="form-contabilita" onsubmit="event.preventDefault(); calcolaRapportino();">
-            
-            <!-- SEZIONE 1: CANALIZZAZIONE -->
-            <div class="mb-8">
-                <h2 class="text-lg font-semibold bg-blue-50 text-blue-800 p-2 rounded mb-4">1. Canalizzazione (Metri)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Scavo sterrato (125mm BT / 160mm MT)</label>
-                        <input type="number" step="0.01" name="Canalizzazione_Sterrato_m" class="w-full border border-slate-300 rounded p-2" placeholder="m">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Scavo asfalto/selciato (125mm BT / 160mm MT)</label>
-                        <input type="number" step="0.01" name="Canalizzazione_Asfalto_m" class="w-full border border-slate-300 rounded p-2" placeholder="m">
-                    </div>
+<body class="bg-slate-50 text-slate-800 p-4 md:p-8 font-sans">
+    <div class="max-w-5xl mx-auto bg-white p-6 md:p-8 rounded-lg shadow-md border-t-4 border-blue-600">
+        <h1 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-b pb-4">
+            Contabilità Guasti MT
+            <span class="block text-sm font-normal text-slate-500 mt-1">Generatore Elenco Codici Areti / Acea</span>
+        </h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Cantiere -->
+            <div class="p-5 border rounded bg-slate-50 shadow-sm">
+                <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">1. Dati Cantiere</h2>
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="maggiorazione" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500">
+                    <label class="text-sm font-medium text-slate-700">Applica +5% Maggiorazione (Municipio I o II)</label>
                 </div>
             </div>
 
-            <!-- SEZIONE 2: BUCA GIUNTI E SAGGI -->
-            <div class="mb-8">
-                <h2 class="text-lg font-semibold bg-blue-50 text-blue-800 p-2 rounded mb-4">2. Buca Giunti e Saggi (Quantità/Mq)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Buca giunti MT su sterrato (fino a 8 mq)</label>
-                        <input type="number" name="Buca_Giunti_MT_Sterrato_pz" class="w-full border border-slate-300 rounded p-2" placeholder="n°">
+            <!-- Orari -->
+            <div class="p-5 border rounded bg-slate-50 shadow-sm">
+                <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">2. Orari Lavoro (Straordinari)</h2>
+                <div class="flex gap-4">
+                    <div class="w-1/2">
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Ingaggio (Inizio)</label>
+                        <input type="time" id="ora_inizio" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500 focus:border-blue-500">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Buca giunti MT su asfalto (fino a 8 mq)</label>
-                        <input type="number" name="Buca_Giunti_MT_Asfalto_pz" class="w-full border border-slate-300 rounded p-2" placeholder="n°">
-                    </div>
-                </div>
-            </div>
-
-            <!-- SEZIONE 3: POSA CAVI -->
-            <div class="mb-8">
-                <h2 class="text-lg font-semibold bg-blue-50 text-blue-800 p-2 rounded mb-4">3. Posa Cavi (Metri)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Posa cavo oltre 50mmq</label>
-                        <input type="number" step="0.01" name="Posa_Cavo_Oltre_50mmq_m" class="w-full border border-slate-300 rounded p-2" placeholder="m">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Posa cavo in tubiera esistente</label>
-                        <input type="number" step="0.01" name="Posa_Cavo_Tubiera_Esistente_m" class="w-full border border-slate-300 rounded p-2" placeholder="m">
+                    <div class="w-1/2">
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Fine Lavoro</label>
+                        <input type="time" id="ora_fine" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500 focus:border-blue-500">
                     </div>
                 </div>
             </div>
-
-            <!-- SEZIONE 4: RIPRISTINI -->
-            <div class="mb-8">
-                <h2 class="text-lg font-semibold bg-blue-50 text-blue-800 p-2 rounded mb-4">4. Ripristini Asfalto / Selciato (Mq)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Fresatura e manto (fino a 10 mq)</label>
-                        <input type="number" step="0.01" name="Ripristino_Asfalto_0_10_mq" class="w-full border border-slate-300 rounded p-2" placeholder="mq">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Fresatura e manto (10-20 mq)</label>
-                        <input type="number" step="0.01" name="Ripristino_Asfalto_10_20_mq" class="w-full border border-slate-300 rounded p-2" placeholder="mq">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Ripristino pavimentazione lapidea</label>
-                        <input type="number" step="0.01" name="Ripristino_Selciato_mq" class="w-full border border-slate-300 rounded p-2" placeholder="mq">
-                    </div>
-                </div>
-            </div>
-
-            <!-- SEZIONE 5: ECONOMIE E MANODOPERA -->
-            <div class="mb-8">
-                <h2 class="text-lg font-semibold bg-blue-50 text-blue-800 p-2 rounded mb-4">5. Economie (Ore)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Operaio Qualificato (ore)</label>
-                        <input type="number" step="0.5" name="Economia_Operaio_Qualificato_h" class="w-full border border-slate-300 rounded p-2" placeholder="h">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Stazionamento Escavatore (ore)</label>
-                        <input type="number" step="0.5" name="Economia_Escavatore_h" class="w-full border border-slate-300 rounded p-2" placeholder="h">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Stazionamento Autocarro (ore)</label>
-                        <input type="number" step="0.5" name="Economia_Autocarro_h" class="w-full border border-slate-300 rounded p-2" placeholder="h">
-                    </div>
-                </div>
-            </div>
-
-            <!-- PULSANTI -->
-            <div class="flex justify-end gap-4 mt-8 pt-4 border-t border-slate-200">
-                <button type="reset" class="px-6 py-2 border border-slate-300 text-slate-600 rounded hover:bg-slate-50 font-medium">Svuota Campi</button>
-                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium shadow">Genera Riepilogo</button>
-            </div>
-
-        </form>
-
-        <!-- AREA RISULTATO -->
-        <div id="risultato" class="hidden mt-8 p-6 bg-green-50 border border-green-200 text-green-900 rounded-lg">
-            <!-- Il riepilogo generato dal JS apparirà qui -->
         </div>
 
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Intervento e Ripristino -->
+            <div class="p-5 border rounded bg-slate-50 shadow-sm">
+                <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">3. Misure Scavo e Materiali</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Buca Giunti MT su Asfalto (n°)</label>
+                    <input type="number" id="qta_buca" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 1" min="0">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Ripristino Asfalto Marciapiede (metri)</label>
+                    <div class="flex gap-2">
+                        <div class="w-1/2 relative">
+                            <input type="number" id="asfalto_l" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Lunghezza">
+                        </div>
+                        <div class="w-1/2 relative">
+                            <input type="number" id="asfalto_p" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Larghezza">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Esecuzione Terna Giunti MT (n°)</label>
+                    <input type="number" id="qta_terna" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 2" min="0">
+                </div>
+
+                <div class="mb-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Posa Cavo MT (metri)</label>
+                    <input type="number" id="mt_cavo" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 3" min="0">
+                </div>
+            </div>
+
+            <!-- Archeologia -->
+            <div class="p-5 border rounded bg-slate-50 shadow-sm">
+                <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">4. Archeologia</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Area Scavo per Archeologia (mq)</label>
+                    <input type="number" id="area_arch" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 4">
+                    <p class="text-xs text-slate-500 mt-1">Calcola in automatico la formula (Area / 0.6)</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Straordinario Archeologo (ore decimali)</label>
+                    <input type="number" id="ore_arch" step="0.01" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 1.75">
+                </div>
+            </div>
+        </div>
+
+        <button onclick="calcola()" class="w-full bg-blue-700 text-white font-bold text-lg py-4 rounded hover:bg-blue-800 transition duration-150 shadow-md">
+            Genera Contabilità
+        </button>
+
+        <div id="risultato" class="mt-10 hidden">
+            <h2 class="text-xl font-bold text-slate-800 mb-4">Elenco Codici Valorizzati</h2>
+            <div class="overflow-x-auto rounded border border-slate-300">
+                <table class="w-full border-collapse text-sm">
+                    <thead class="bg-slate-200 text-slate-700">
+                        <tr>
+                            <th class="p-3 text-left border-b font-semibold">Codice di Listino</th>
+                            <th class="p-3 text-left border-b font-semibold">Descrizione Lavoro</th>
+                            <th class="p-3 text-center border-b font-semibold">Quantità</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabella_risultati" class="bg-white">
+                        <!-- Righe generate da JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="msg_magg" class="mt-4 p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-800 font-bold hidden rounded">
+                ATTENZIONE: Ricordati di applicare il <span class="text-xl">MAGG 5%</span> sull'importo totale!
+            </div>
+        </div>
     </div>
 
+    <script>
+        function calcola() {
+            let tbody = document.getElementById('tabella_risultati');
+            tbody.innerHTML = '';
+            
+            let qtaBuca = parseFloat(document.getElementById('qta_buca').value) || 0;
+            let asfaltoL = parseFloat(document.getElementById('asfalto_l').value) || 0;
+            let asfaltoP = parseFloat(document.getElementById('asfalto_p').value) || 0;
+            let qtaTerna = parseFloat(document.getElementById('qta_terna').value) || 0;
+            let mtCavo = parseFloat(document.getElementById('mt_cavo').value) || 0;
+            let areaArch = parseFloat(document.getElementById('area_arch').value) || 0;
+            let oreArch = parseFloat(document.getElementById('ore_arch').value) || 0;
+            
+            let inizio = document.getElementById('ora_inizio').value;
+            let fine = document.getElementById('ora_fine').value;
+
+            let voci = [];
+
+            // 1. BUCA E SICUREZZA
+            if (qtaBuca > 0) {
+                voci.push(["20E.A01.04.02", "Buca giunti MT su asfalto fino a mq 8", qtaBuca]);
+                voci.push(["20C.A01.01.05", "Brandizzazione cantiere fino a 20m", 1]); // Fissa a 1
+                voci.push(["SIC.E 02", "Oneri cantiere per buche asfalto", qtaBuca]); 
+                voci.push(["SIC.E 67", "Sicurezza riferita a prestazione 20C.A01.01.05", 1]); // Fissa a 1
+            }
+
+            // 2. CAVI E GIUNTI
+            if (mtCavo > 0) voci.push(["20E.C01.01.06", "Linea MT", mtCavo]);
+            if (qtaTerna > 0) voci.push(["20E.C01.02.15", "Giunto MT terna", qtaTerna]);
+
+            // 3. RIPRISTINO E SCAGLIONI (Logica a cascata)
+            let areaRipristino = asfaltoL * asfaltoP;
+            if (areaRipristino > 0) {
+                voci.push(["20C.D01.04.06", "Ripristino marciapiede in tappeto d'usura", areaRipristino.toFixed(2)]);
+                
+                // Compenso aggiuntivo per asfalto decurtato dalla buca base (es. 4 mq)
+                let compensoAgg = areaRipristino - (qtaBuca * 4); 
+                if (compensoAgg > 0) {
+                    voci.push(["20C.D01.04.05", "Compenso aggiuntivo per semplice rimozione dell'asfalto colato", compensoAgg.toFixed(2)]);
+                }
+
+                // Oneri Sicurezza Ripristino (Scaglioni)
+                if (areaRipristino > 20) {
+                    voci.push(["SIC.E 08", "Oneri ripristino asfalto/colato/selciato oltre mq 20 fino a mq 40", 1]);
+                }
+                if (areaRipristino > 40) {
+                    let eccedenza = areaRipristino - 40;
+                    voci.push(["SIC.E 09", "Oneri ripristino asfalto/colato/selciato oltre mq 40 al mq", eccedenza.toFixed(2)]);
+                }
+            }
+
+            // 4. ARCHEOLOGIA
+            if (areaArch > 0) {
+                let metriArch = Math.round((areaArch / 0.6) * 100) / 100;
+                voci.push(["20C.B04.02.01", "Prestazione di sorveglianza archeologica per la posa dei primi 3 metri", 1]);
+                if (metriArch > 3) {
+                    let oltre3 = metriArch - 3;
+                    voci.push(["20C.B04.02.02", "Prestazione di sorveglianza archeologica oltre i primi 3 m. Al metro lineare.", oltre3.toFixed(2)]);
+                }
+            }
+            if (oreArch > 0) {
+                voci.push(["20C.B04.02.03", "Straordinario archeologica", oreArch.toFixed(2)]); 
+            }
+
+            // 5. STRAORDINARI OPERATIVI (Calcolo automatico ore tramite ingaggio/fine)
+            if (inizio && fine) {
+                let d1 = new Date("2000-01-01T" + inizio);
+                let d2 = new Date("2000-01-01T" + fine);
+                if (d2 < d1) d2.setDate(d2.getDate() + 1); // Gestione scavalco mezzanotte
+                let oreLavoro = (d2 - d1) / 3600000;
+                if (oreLavoro > 0) {
+                    voci.push(["20E.I01.01.01", "Compenso orario aggiuntivo per lavoro feriale/festivo/notturno", oreLavoro.toFixed(2)]);
+                }
+            }
+
+            // Stampa a video
+            voci.forEach(v => {
+                tbody.innerHTML += `<tr class="hover:bg-slate-50 transition duration-150">
+                    <td class="border-b p-3 font-mono font-bold text-blue-700">${v[0]}</td>
+                    <td class="border-b p-3 text-slate-700">${v[1]}</td>
+                    <td class="border-b p-3 text-center font-bold text-lg text-slate-900">${v[2]}</td>
+                </tr>`;
+            });
+
+            document.getElementById('risultato').classList.remove('hidden');
+            
+            // Visualizza alert maggiorazione se la spunta è attiva
+            if(document.getElementById('maggiorazione').checked) {
+                document.getElementById('msg_magg').classList.remove('hidden');
+            } else {
+                document.getElementById('msg_magg').classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>
