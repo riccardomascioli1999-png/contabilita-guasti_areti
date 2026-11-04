@@ -17,7 +17,7 @@
             <!-- Cantiere -->
             <div class="p-5 border rounded bg-slate-50 shadow-sm">
                 <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">1. Dati Cantiere</h2>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 mt-4">
                     <input type="checkbox" id="maggiorazione" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500">
                     <label class="text-sm font-medium text-slate-700">Applica +5% Maggiorazione (Municipio I o II)</label>
                 </div>
@@ -44,9 +44,15 @@
             <div class="p-5 border rounded bg-slate-50 shadow-sm">
                 <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">3. Misure Scavo e Materiali</h2>
                 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Buca Giunti MT su Asfalto (n°)</label>
-                    <input type="number" id="qta_buca" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 1" min="0">
+                <div class="mb-4 flex gap-4">
+                    <div class="w-1/2">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Buca Giunti asfalto (n°)</label>
+                        <input type="number" id="qta_buca" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 1" min="0">
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Area singola buca (mq)</label>
+                        <input type="number" id="area_singola_buca" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500 bg-slate-100" value="4" step="0.1" min="0" title="Mq decurtati di base dal compenso asfalto">
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -61,14 +67,15 @@
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Esecuzione Terna Giunti MT (n°)</label>
-                    <input type="number" id="qta_terna" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 2" min="0">
-                </div>
-
-                <div class="mb-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Posa Cavo MT (metri)</label>
-                    <input type="number" id="mt_cavo" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 3" min="0">
+                <div class="mb-4 flex gap-4">
+                    <div class="w-1/2">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Terna Giunti MT (n°)</label>
+                        <input type="number" id="qta_terna" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 2" min="0">
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Posa Cavo MT (m)</label>
+                        <input type="number" id="mt_cavo" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 3" min="0">
+                    </div>
                 </div>
             </div>
 
@@ -110,22 +117,31 @@
                 </table>
             </div>
             
-            <div id="msg_magg" class="mt-4 p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-800 font-bold hidden rounded">
-                ATTENZIONE: Ricordati di applicare il <span class="text-xl">MAGG 5%</span> sull'importo totale!
+            <div id="msg_magg" class="mt-4 p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-800 font-bold hidden rounded flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <span>ATTENZIONE: Ricordati di applicare il <strong class="text-xl">MAGG 5%</strong> sull'importo totale in SAP!</span>
             </div>
         </div>
     </div>
 
     <script>
+        function fNum(n) {
+            return Number.isInteger(n) ? n.toString() : n.toFixed(2).replace(".", ",");
+        }
+
         function calcola() {
             let tbody = document.getElementById('tabella_risultati');
             tbody.innerHTML = '';
             
             let qtaBuca = parseFloat(document.getElementById('qta_buca').value) || 0;
+            let areaSingolaBuca = parseFloat(document.getElementById('area_singola_buca').value) || 4;
+            
             let asfaltoL = parseFloat(document.getElementById('asfalto_l').value) || 0;
             let asfaltoP = parseFloat(document.getElementById('asfalto_p').value) || 0;
+            
             let qtaTerna = parseFloat(document.getElementById('qta_terna').value) || 0;
             let mtCavo = parseFloat(document.getElementById('mt_cavo').value) || 0;
+            
             let areaArch = parseFloat(document.getElementById('area_arch').value) || 0;
             let oreArch = parseFloat(document.getElementById('ore_arch').value) || 0;
             
@@ -137,9 +153,9 @@
             // 1. BUCA E SICUREZZA
             if (qtaBuca > 0) {
                 voci.push(["20E.A01.04.02", "Buca giunti MT su asfalto fino a mq 8", qtaBuca]);
-                voci.push(["20C.A01.01.05", "Brandizzazione cantiere fino a 20m", 1]); // Fissa a 1
+                voci.push(["20C.A01.01.05", "Brandizzazione cantiere fino a 20m", 1]); 
                 voci.push(["SIC.E 02", "Oneri cantiere per buche asfalto", qtaBuca]); 
-                voci.push(["SIC.E 67", "Sicurezza riferita a prestazione 20C.A01.01.05", 1]); // Fissa a 1
+                voci.push(["SIC.E 67", "Sicurezza riferita a prestazione 20C.A01.01.05", 1]); 
             }
 
             // 2. CAVI E GIUNTI
@@ -147,23 +163,26 @@
             if (qtaTerna > 0) voci.push(["20E.C01.02.15", "Giunto MT terna", qtaTerna]);
 
             // 3. RIPRISTINO E SCAGLIONI (Logica a cascata)
-            let areaRipristino = asfaltoL * asfaltoP;
+            let areaRipristino = Math.round((asfaltoL * asfaltoP) * 100) / 100;
             if (areaRipristino > 0) {
-                voci.push(["20C.D01.04.06", "Ripristino marciapiede in tappeto d'usura", areaRipristino.toFixed(2)]);
+                voci.push(["20C.D01.04.06", "Ripristino marciapiede in tappeto d'usura", areaRipristino]);
                 
-                // Compenso aggiuntivo per asfalto decurtato dalla buca base (es. 4 mq)
-                let compensoAgg = areaRipristino - (qtaBuca * 4); 
+                let compensoAgg = areaRipristino - (qtaBuca * areaSingolaBuca); 
                 if (compensoAgg > 0) {
-                    voci.push(["20C.D01.04.05", "Compenso aggiuntivo per semplice rimozione dell'asfalto colato", compensoAgg.toFixed(2)]);
+                    voci.push(["20C.D01.04.05", "Compenso aggiuntivo per semplice rimozione dell'asfalto colato", compensoAgg]);
                 }
 
-                // Oneri Sicurezza Ripristino (Scaglioni)
-                if (areaRipristino > 20) {
+                if (areaRipristino > 0 && areaRipristino <= 10) {
+                    voci.push(["SIC.E 06", "Oneri ripristino asfalto/colato/selciato fino a mq 10", 1]);
+                } else if (areaRipristino > 10 && areaRipristino <= 20) {
+                    voci.push(["SIC.E 07", "Oneri ripristino asfalto/colato/selciato oltre mq 10 fino a mq 20", 1]);
+                } else if (areaRipristino > 20) {
                     voci.push(["SIC.E 08", "Oneri ripristino asfalto/colato/selciato oltre mq 20 fino a mq 40", 1]);
-                }
-                if (areaRipristino > 40) {
-                    let eccedenza = areaRipristino - 40;
-                    voci.push(["SIC.E 09", "Oneri ripristino asfalto/colato/selciato oltre mq 40 al mq", eccedenza.toFixed(2)]);
+                    
+                    if (areaRipristino > 40) {
+                        let eccedenza = areaRipristino - 40;
+                        voci.push(["SIC.E 09", "Oneri ripristino asfalto/colato/selciato oltre mq 40 al mq", eccedenza]);
+                    }
                 }
             }
 
@@ -173,36 +192,43 @@
                 voci.push(["20C.B04.02.01", "Prestazione di sorveglianza archeologica per la posa dei primi 3 metri", 1]);
                 if (metriArch > 3) {
                     let oltre3 = metriArch - 3;
-                    voci.push(["20C.B04.02.02", "Prestazione di sorveglianza archeologica oltre i primi 3 m. Al metro lineare.", oltre3.toFixed(2)]);
+                    voci.push(["20C.B04.02.02", "Prestazione di sorveglianza archeologica oltre i primi 3 m. Al metro lineare.", oltre3]);
                 }
             }
             if (oreArch > 0) {
-                voci.push(["20C.B04.02.03", "Straordinario archeologica", oreArch.toFixed(2)]); 
+                voci.push(["20C.B04.02.03", "Straordinario archeologica", oreArch]); 
             }
 
-            // 5. STRAORDINARI OPERATIVI (Calcolo automatico ore tramite ingaggio/fine)
+            // 5. STRAORDINARI OPERATIVI
             if (inizio && fine) {
-                let d1 = new Date("2000-01-01T" + inizio);
-                let d2 = new Date("2000-01-01T" + fine);
-                if (d2 < d1) d2.setDate(d2.getDate() + 1); // Gestione scavalco mezzanotte
-                let oreLavoro = (d2 - d1) / 3600000;
+                let p1 = inizio.split(":");
+                let p2 = fine.split(":");
+                
+                let min1 = parseInt(p1[0]) * 60 + parseInt(p1[1]);
+                let min2 = parseInt(p2[0]) * 60 + parseInt(p2[1]);
+                
+                if (min2 < min1) {
+                    min2 += 24 * 60; 
+                }
+                
+                let oreLavoro = (min2 - min1) / 60;
                 if (oreLavoro > 0) {
-                    voci.push(["20E.I01.01.01", "Compenso orario aggiuntivo per lavoro feriale/festivo/notturno", oreLavoro.toFixed(2)]);
+                    voci.push(["20E.I01.01.01", "Compenso orario aggiuntivo per lavoro feriale/festivo/notturno", oreLavoro]);
                 }
             }
 
-            // Stampa a video
+            // Stampa in tabella
             voci.forEach(v => {
-                tbody.innerHTML += `<tr class="hover:bg-slate-50 transition duration-150">
+                let htmlRow = `<tr class="hover:bg-slate-50 transition duration-150">
                     <td class="border-b p-3 font-mono font-bold text-blue-700">${v[0]}</td>
                     <td class="border-b p-3 text-slate-700">${v[1]}</td>
-                    <td class="border-b p-3 text-center font-bold text-lg text-slate-900">${v[2]}</td>
+                    <td class="border-b p-3 text-center font-bold text-lg text-slate-900">${fNum(v[2])}</td>
                 </tr>`;
+                tbody.insertAdjacentHTML('beforeend', htmlRow);
             });
 
             document.getElementById('risultato').classList.remove('hidden');
             
-            // Visualizza alert maggiorazione se la spunta è attiva
             if(document.getElementById('maggiorazione').checked) {
                 document.getElementById('msg_magg').classList.remove('hidden');
             } else {
