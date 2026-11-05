@@ -3,238 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contabilità Guasti MT - Impresa Perfetti Luciano</title>
+    <title>Contabilità Cantieri - Gestione Buca MT/BT</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-50 text-slate-800 p-4 md:p-8 font-sans">
-    <div class="max-w-5xl mx-auto bg-white p-6 md:p-8 rounded-lg shadow-md border-t-4 border-blue-600">
-        <h1 class="text-2xl md:text-3xl font-bold text-blue-900 mb-6 border-b pb-4">
-            Contabilità Guasti MT
-            <span class="block text-sm font-normal text-slate-500 mt-1">Generatore Elenco Codici Areti / Acea</span>
-        </h1>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- Cantiere -->
-            <div class="p-5 border rounded bg-slate-50 shadow-sm">
-                <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">1. Dati Cantiere</h2>
-                <div class="flex items-center gap-3 mt-4">
-                    <input type="checkbox" id="maggiorazione" class="w-5 h-5 rounded text-blue-600 focus:ring-blue-500">
-                    <label class="text-sm font-medium text-slate-700">Applica +5% Maggiorazione (Municipio I o II)</label>
-                </div>
-            </div>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
-            <!-- Orari -->
-            <div class="p-5 border rounded bg-slate-50 shadow-sm">
-                <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">2. Orari Lavoro (Straordinari)</h2>
-                <div class="flex gap-4">
-                    <div class="w-1/2">
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Ingaggio (Inizio)</label>
-                        <input type="time" id="ora_inizio" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div class="w-1/2">
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Fine Lavoro</label>
-                        <input type="time" id="ora_fine" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500 focus:border-blue-500">
-                    </div>
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500 text-slate-900 p-2.5 rounded-lg font-bold">
+                    <i class="fa-solid fa-hard-hat text-xl"></i>
                 </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <!-- Intervento e Ripristino -->
-            <div class="p-5 border rounded bg-slate-50 shadow-sm">
-                <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">3. Misure Scavo e Materiali</h2>
-                
-                <div class="mb-4 flex gap-4">
-                    <div class="w-1/2">
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Buca Giunti asfalto (n°)</label>
-                        <input type="number" id="qta_buca" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 1" min="0">
-                    </div>
-                    <div class="w-1/2">
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Area singola buca (mq)</label>
-                        <input type="number" id="area_singola_buca" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500 bg-slate-100" value="4" step="0.1" min="0" title="Mq decurtati di base dal compenso asfalto">
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Ripristino Asfalto Marciapiede (metri)</label>
-                    <div class="flex gap-2">
-                        <div class="w-1/2 relative">
-                            <input type="number" id="asfalto_l" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Lunghezza">
-                        </div>
-                        <div class="w-1/2 relative">
-                            <input type="number" id="asfalto_p" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Larghezza">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-4 flex gap-4">
-                    <div class="w-1/2">
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Terna Giunti MT (n°)</label>
-                        <input type="number" id="qta_terna" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 2" min="0">
-                    </div>
-                    <div class="w-1/2">
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Posa Cavo MT (m)</label>
-                        <input type="number" id="mt_cavo" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 3" min="0">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Archeologia -->
-            <div class="p-5 border rounded bg-slate-50 shadow-sm">
-                <h2 class="font-semibold text-lg text-blue-800 mb-4 border-b pb-2">4. Archeologia</h2>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Area Scavo per Archeologia (mq)</label>
-                    <input type="number" id="area_arch" step="0.1" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 4">
-                    <p class="text-xs text-slate-500 mt-1">Calcola in automatico la formula (Area / 0.6)</p>
-                </div>
-                
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Straordinario Archeologo (ore decimali)</label>
-                    <input type="number" id="ore_arch" step="0.01" class="w-full border border-slate-300 p-2 rounded focus:ring-blue-500" placeholder="Es. 1.75">
+                    <h1 class="text-xl font-bold tracking-tight">Contabilità Rapida Cantiere</h1>
+                    <p class="text-xs text-slate-400">Gestione Completa Scavi, Giunti MT/BT & Archeologia</p>
                 </div>
             </div>
-        </div>
-
-        <button onclick="calcola()" class="w-full bg-blue-700 text-white font-bold text-lg py-4 rounded hover:bg-blue-800 transition duration-150 shadow-md">
-            Genera Contabilità
-        </button>
-
-        <div id="risultato" class="mt-10 hidden">
-            <h2 class="text-xl font-bold text-slate-800 mb-4">Elenco Codici Valorizzati</h2>
-            <div class="overflow-x-auto rounded border border-slate-300">
-                <table class="w-full border-collapse text-sm">
-                    <thead class="bg-slate-200 text-slate-700">
-                        <tr>
-                            <th class="p-3 text-left border-b font-semibold">Codice di Listino</th>
-                            <th class="p-3 text-left border-b font-semibold">Descrizione Lavoro</th>
-                            <th class="p-3 text-center border-b font-semibold">Quantità</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabella_risultati" class="bg-white">
-                        <!-- Righe generate da JS -->
-                    </tbody>
-                </table>
+            <div class="text-right hidden sm:block">
+                <span class="text-xs bg-slate-800 text-amber-400 px-3 py-1 rounded-full border border-slate-700 font-mono">Listino Ufficiale Attivo</span>
             </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Colonna Sinistra: Input Dati (7 Colonne) -->
+        <div class="lg:col-span-7 space-y-6">
             
-            <div id="msg_magg" class="mt-4 p-4 bg-amber-50 border-l-4 border-amber-500 text-amber-800 font-bold hidden rounded flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                <span>ATTENZIONE: Ricordati di applicare il <strong class="text-xl">MAGG 5%</strong> sull'importo totale in SAP!</span>
+            <!-- Riferimenti Cantiere -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                    <i class="fa-solid fa-location-dot text-amber-500 mr-2"></i> Riferimenti Cantiere
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Indirizzo / Località</label>
+                        <input type="text" id="indirizzo" placeholder="es. Via Tiburtina 1431" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Riferimento / Picchetto</label>
+                        <input type="text" id="picchetto" placeholder="es. PICCH. 12" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
+            <!-- Dimensioni Buca & Tipologia -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                    <i class="fa-solid fa-ruler-combined text-amber-500 mr-2"></i> Dimensioni Buca & Tipologia Impianto
+                </h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Lunghezza (m)</label>
+                        <input type="number" id="lunghezza" step="0.01" min="0" value="2.00" oninput="calcolaContabilita()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Larghezza (m)</label>
+                        <input type="number" id="larghezza" step="0.01" min="0" value="1.50" oninput="calcolaContabilita()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Profondità (m)</label>
+                        <input type="number" id="profondita" step="0.01" min="0" value="1.20" oninput="calcolaContabilita()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Tensione Impianto</label>
+                        <select id="tensioneImpianto" onchange="calcolaContabilita()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            <option value="mt">Media Tensione (MT)</option>
+                            <option value="bt">Bassa Tensione (BT)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Superficie Scavo</label>
+                        <select id="tipoPavimento" onchange="calcolaContabilita()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            <option value="sterrato">Sterrato / Campagna</option>
+                            <option value="asfalto">Asfalto / Selciato</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Metri Lineari Cavo</label>
+                        <input type="number" id="metriCavo" step="0.1" min="0" value="5.0" oninput="calcolaContabilita()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opzioni & Sicurezza -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                    <i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i> Opzioni e Sicurezza
+                </h2>
+                
+                <div class="space-y-3 text-sm">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="chkDiscarica" checked onchange="calcolaContabilita()" class="rounded text-amber-600 focus:ring-amber-500 h-4 w-4">
+                        <span>Carico e trasporto a discarica materiale di risulta</span>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="chkOneri" checked onchange="calcolaContabilita()" class="rounded text-amber-600 focus:ring-amber-500 h-4 w-4">
+                        <span>Oneri cantiere per buche (SIC.E 02 / SIC.E 04)</span>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Colonna Destra: Riepilogo Contabile (5 Colonne) -->
+        <div class="lg:col-span-5 space-y-6">
+            
+            <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl sticky top-6 border border-slate-800">
+                <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+                    <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                        <i class="fa-solid fa-file-invoice-dollar mr-2"></i> Contabilità Stimata
+                    </h2>
+                    <span id="superficieCalcolata" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded font-mono">0.00 mq</span>
+                </div>
+
+                <!-- Tabella Voci Generate -->
+                <div class="py-4 max-h-[380px] overflow-y-auto space-y-3 pr-1" id="listaVociContabili">
+                    <!-- Popolato dinamicamente via JS -->
+                </div>
+
+                <!-- Totale Generale -->
+                <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs text-slate-400 block">IMPORTO TOTALE STIMATO</span>
+                        <span class="text-xs text-slate-500 font-mono">(IVA esclusa)</span>
+                    </div>
+                    <div class="text-2xl font-black text-amber-400 font-mono" id="totaleGenerale">€ 0,00</div>
+                </div>
+
+                <!-- Bottoni Azione -->
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button onclick="azzeraCampi()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-2.5 px-4 rounded-lg transition border border-slate-700">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Pulisci
+                    </button>
+                    <button onclick="copiaRiepilogo()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-bold py-2.5 px-4 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-copy mr-1"></i> Copia Report
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Script Logica di Calcolo -->
     <script>
-        function fNum(n) {
-            return Number.isInteger(n) ? n.toString() : n.toFixed(2).replace(".", ",");
-        }
+        const LISTINO = {
+            // MT
+            buca_mt_sterrato: 925.50,   // 20E.A01.04.01 (fino a 8 mq)[cite: 1]
+            buca_mt_asfalto: 1169.39,   // 20E.A01.04.02 (fino a 8 mq)[cite: 1]
+            giunto_mt_terna: 349.14,    // 15E.C01.02.15[cite: 1]
+            posa_cavo_mt: 3.56,         // 15E.C01.01.06[cite: 1]
 
-        function calcola() {
-            let tbody = document.getElementById('tabella_risultati');
-            tbody.innerHTML = '';
+            // BT
+            buca_bt_sterrato: 535.85,   // 15E.A01.04.04 (fino a 4 mq)[cite: 1]
+            buca_bt_asfalto: 654.27,    // 15E.A01.04.06 (fino a 4 mq)[cite: 1]
+            giunto_bt: 35.80,           // 15E.C01.02.08 (<50)[cite: 1]
+            posa_cavo_bt: 1.63,         // 15E.C01.01.08 (fino 50mmq)[cite: 1]
             
-            let qtaBuca = parseFloat(document.getElementById('qta_buca').value) || 0;
-            let areaSingolaBuca = parseFloat(document.getElementById('area_singola_buca').value) || 4;
-            
-            let asfaltoL = parseFloat(document.getElementById('asfalto_l').value) || 0;
-            let asfaltoP = parseFloat(document.getElementById('asfalto_p').value) || 0;
-            
-            let qtaTerna = parseFloat(document.getElementById('qta_terna').value) || 0;
-            let mtCavo = parseFloat(document.getElementById('mt_cavo').value) || 0;
-            
-            let areaArch = parseFloat(document.getElementById('area_arch').value) || 0;
-            let oreArch = parseFloat(document.getElementById('ore_arch').value) || 0;
-            
-            let inizio = document.getElementById('ora_inizio').value;
-            let fine = document.getElementById('ora_fine').value;
+            // Archeologia
+            archeologia_primi_3m: 232.00, // 15C.B04.02.02[cite: 1]
+            archeologia_extra: 6.00,      // 15C.B04.02.03[cite: 1]
+
+            // Trasporti e Sicurezza
+            discarica_ton: 16.17,       
+            oneri_asfalto: 39.96,       
+            oneri_sterrato: 29.39       
+        };
+
+        function calcolaContabilita() {
+            const lung = parseFloat(document.getElementById('lunghezza').value) || 0;
+            const larg = parseFloat(document.getElementById('larghezza').value) || 0;
+            const prof = parseFloat(document.getElementById('profondita').value) || 0;
+            const metriCavo = parseFloat(document.getElementById('metriCavo').value) || 0;
+            const tensione = document.getElementById('tensioneImpianto').value;
+            const pavimento = document.getElementById('tipoPavimento').value;
+
+            const mq = lung * larg;
+            const mc = mq * prof;
+            const tonnellate = mc * 1.6;
+
+            document.getElementById('superficieCalcolata').innerText = mq.toFixed(2) + ' mq (' + mc.toFixed(2) + ' mc)';
 
             let voci = [];
+            let totale = 0;
 
-            // 1. BUCA E SICUREZZA
-            if (qtaBuca > 0) {
-                voci.push(["20E.A01.04.02", "Buca giunti MT su asfalto fino a mq 8", qtaBuca]);
-                voci.push(["20C.A01.01.05", "Brandizzazione cantiere fino a 20m", 1]); 
-                voci.push(["SIC.E 02", "Oneri cantiere per buche asfalto", qtaBuca]); 
-                voci.push(["SIC.E 67", "Sicurezza riferita a prestazione 20C.A01.01.05", 1]); 
-            }
-
-            // 2. CAVI E GIUNTI
-            if (mtCavo > 0) voci.push(["20E.C01.01.06", "Linea MT", mtCavo]);
-            if (qtaTerna > 0) voci.push(["20E.C01.02.15", "Giunto MT terna", qtaTerna]);
-
-            // 3. RIPRISTINO E SCAGLIONI (Logica a cascata)
-            let areaRipristino = Math.round((asfaltoL * asfaltoP) * 100) / 100;
-            if (areaRipristino > 0) {
-                voci.push(["20C.D01.04.06", "Ripristino marciapiede in tappeto d'usura", areaRipristino]);
-                
-                let compensoAgg = areaRipristino - (qtaBuca * areaSingolaBuca); 
-                if (compensoAgg > 0) {
-                    voci.push(["20C.D01.04.05", "Compenso aggiuntivo per semplice rimozione dell'asfalto colato", compensoAgg]);
+            // 1. Gestione Buca Scavo (MT o BT, Sterrato o Asfalto)
+            if (tensione === 'mt') {
+                if (pavimento === 'asfalto') {
+                    voci.push({ codice: '20E.A01.04.02', desc: 'Buca giunti MT su asfalto (fino a 8 mq)', qta: 1, u: 'cad', prz: LISTINO.buca_mt_asfalto });
+                } else {
+                    voci.push({ codice: '20E.A01.04.01', desc: 'Buca giunti MT su sterrato (fino a 8 mq)', qta: 1, u: 'cad', prz: LISTINO.buca_mt_sterrato });
                 }
-
-                if (areaRipristino > 0 && areaRipristino <= 10) {
-                    voci.push(["SIC.E 06", "Oneri ripristino asfalto/colato/selciato fino a mq 10", 1]);
-                } else if (areaRipristino > 10 && areaRipristino <= 20) {
-                    voci.push(["SIC.E 07", "Oneri ripristino asfalto/colato/selciato oltre mq 10 fino a mq 20", 1]);
-                } else if (areaRipristino > 20) {
-                    voci.push(["SIC.E 08", "Oneri ripristino asfalto/colato/selciato oltre mq 20 fino a mq 40", 1]);
-                    
-                    if (areaRipristino > 40) {
-                        let eccedenza = areaRipristino - 40;
-                        voci.push(["SIC.E 09", "Oneri ripristino asfalto/colato/selciato oltre mq 40 al mq", eccedenza]);
-                    }
+            } else {
+                if (pavimento === 'asfalto') {
+                    voci.push({ codice: '15E.A01.04.06', desc: 'Buca giunti BT su asfalto (fino a 4 mq)', qta: 1, u: 'cad', prz: LISTINO.buca_bt_asfalto });
+                } else {
+                    voci.push({ codice: '15E.A01.04.04', desc: 'Buca giunti BT su sterrato (fino a 4 mq)', qta: 1, u: 'cad', prz: LISTINO.buca_bt_sterrato });
                 }
             }
 
-            // 4. ARCHEOLOGIA
-            if (areaArch > 0) {
-                let metriArch = Math.round((areaArch / 0.6) * 100) / 100;
-                voci.push(["20C.B04.02.01", "Prestazione di sorveglianza archeologica per la posa dei primi 3 metri", 1]);
-                if (metriArch > 3) {
-                    let oltre3 = metriArch - 3;
-                    voci.push(["20C.B04.02.02", "Prestazione di sorveglianza archeologica oltre i primi 3 m. Al metro lineare.", oltre3]);
-                }
-            }
-            if (oreArch > 0) {
-                voci.push(["20C.B04.02.03", "Straordinario archeologica", oreArch]); 
+            // 2. Giunti (Terna se MT, singolo se BT)
+            if (tensione === 'mt') {
+                voci.push({ codice: '15E.C01.02.15', desc: 'Esecuzione Terna di Giunti MT', qta: 1, u: 'n', prz: LISTINO.giunto_mt_terna });
+            } else {
+                voci.push({ codice: '15E.C01.02.08', desc: 'Giunto BT <50 mmq', qta: 1, u: 'n', prz: LISTINO.giunto_bt });
             }
 
-            // 5. STRAORDINARI OPERATIVI
-            if (inizio && fine) {
-                let p1 = inizio.split(":");
-                let p2 = fine.split(":");
-                
-                let min1 = parseInt(p1[0]) * 60 + parseInt(p1[1]);
-                let min2 = parseInt(p2[0]) * 60 + parseInt(p2[1]);
-                
-                if (min2 < min1) {
-                    min2 += 24 * 60; 
-                }
-                
-                let oreLavoro = (min2 - min1) / 60;
-                if (oreLavoro > 0) {
-                    voci.push(["20E.I01.01.01", "Compenso orario aggiuntivo per lavoro feriale/festivo/notturno", oreLavoro]);
+            // 3. Posa Cavo / Linea
+            if (metriCavo > 0) {
+                if (tensione === 'mt') {
+                    voci.push({ codice: '15E.C01.01.06', desc: 'Posa Linea MT in cavidotto', qta: metriCavo, u: 'm', prz: LISTINO.posa_cavo_mt });
+                } else {
+                    voci.push({ codice: '15E.C01.01.08', desc: 'Posa cavo BT fino 50mmq', qta: metriCavo, u: 'm', prz: LISTINO.posa_cavo_bt });
                 }
             }
 
-            // Stampa in tabella
-            voci.forEach(v => {
-                let htmlRow = `<tr class="hover:bg-slate-50 transition duration-150">
-                    <td class="border-b p-3 font-mono font-bold text-blue-700">${v[0]}</td>
-                    <td class="border-b p-3 text-slate-700">${v[1]}</td>
-                    <td class="border-b p-3 text-center font-bold text-lg text-slate-900">${fNum(v[2])}</td>
-                </tr>`;
-                tbody.insertAdjacentHTML('beforeend', htmlRow);
+            // 4. Archeologia
+            if (metriCavo > 0) {
+                voci.push({ codice: '15C.B04.02.02', desc: 'Sorveglianza archeologica (primi 3 metri)', qta: 1, u: 'cad', prz: LISTINO.archeologia_primi_3m });
+                let metriSuccessivi = Math.max(0, metriCavo - 3);
+                if (metriSuccessivi > 0) {
+                    voci.push({ codice: '15C.B04.02.03', desc: 'Sorveglianza archeologica (metri successivi oltre i 3m)', qta: metriSuccessivi, u: 'mt', prz: LISTINO.archeologia_extra });
+                }
+            }
+
+            // 5. Trasporto e Discarica
+            if (document.getElementById('chkDiscarica').checked && tonnellate > 0) {
+                voci.push({ codice: '15C.C01.03.02', desc: 'Carico, trasporto e conferimento a discarica', qta: tonnellate.toFixed(2), u: 't', prz: LISTINO.discarica_ton });
+            }
+
+            // 6. Oneri di Cantiere e Sicurezza
+            if (document.getElementById('chkOneri').checked) {
+                if (pavimento === 'asfalto') {
+                    voci.push({ codice: 'SIC.E 02', desc: 'Oneri cantiere per buche asfalto', qta: 1, u: 'n', prz: LISTINO.oneri_asfalto });
+                } else {
+                    voci.push({ codice: 'SIC.E 04', desc: 'Oneri cantiere per buche sterrato', qta: 1, u: 'n', prz: LISTINO.oneri_sterrato });
+                }
+            }
+
+            // Renderizzazione HTML
+            let container = document.getElementById('listaVociContabili');
+            container.innerHTML = '';
+
+            voci.forEach(item => {
+                let importoVoce = item.qta * item.prz;
+                totale += importoVoce;
+
+                let htmlCard = `
+                    <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700/60 text-xs">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="font-mono text-amber-400 font-bold">${item.codice}</span>
+                            <span class="font-mono font-bold text-white">€ ${importoVoce.toFixed(2)}</span>
+                        </div>
+                        <p class="text-slate-300 mb-1">${item.desc}</p>
+                        <div class="text-slate-400 text-[10px] flex justify-between">
+                            <span>Qta: ${item.qta} ${item.u}</span>
+                            <span>Unitario: € ${item.prz.toFixed(2)}</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += htmlCard;
             });
 
-            document.getElementById('risultato').classList.remove('hidden');
-            
-            if(document.getElementById('maggiorazione').checked) {
-                document.getElementById('msg_magg').classList.remove('hidden');
-            } else {
-                document.getElementById('msg_magg').classList.add('hidden');
-            }
+            document.getElementById('totaleGenerale').innerText = '€ ' + totale.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
+
+        function azzeraCampi() {
+            document.getElementById('lunghezza').value = 2.00;
+            document.getElementById('larghezza').value = 1.50;
+            document.getElementById('profondita').value = 1.20;
+            document.getElementById('metriCavo').value = 5.0;
+            document.getElementById('indirizzo').value = '';
+            document.getElementById('picchetto').value = '';
+            calcolaContabilita();
+        }
+
+        function copiaRiepilogo() {
+            const indirizzo = document.getElementById('indirizzo').value || 'Non specificato';
+            const picchetto = document.getElementById('picchetto').value || 'N/D';
+            const totale = document.getElementById('totaleGenerale').innerText;
+            
+            let testo = `=== RIEPILOGO CONTABILE CANTIERE ===\n`;
+            testo += `Indirizzo: ${indirizzo}\n`;
+            testo += `Picchetto: ${picchetto}\n`;
+            testo += `Superficie Buca: ${document.getElementById('superficieCalcolata').innerText}\n`;
+            testo += `Totale Stimato: ${totale}\n`;
+
+            navigator.clipboard.writeText(testo);
+            alert('Riepilogo copiato negli appunti con successo!');
+        }
+
+        window.onload = calcolaContabilita;
     </script>
 </body>
 </html>
